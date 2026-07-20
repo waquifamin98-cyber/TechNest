@@ -4,11 +4,27 @@
 
 var TN = window.TN || {};
 
+/* ---------- Image Fallback ---------- */
+TN.productPlaceholder = function (name, brand) {
+    var n = (name || 'Product').substring(0, 30);
+    var b = brand || '';
+    return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 450'%3E" +
+        "%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E" +
+        "%3Cstop offset='0%25' stop-color='%230A1628'/%3E" +
+        "%3Cstop offset='100%25' stop-color='%23132240'/%3E%3C/linearGradient%3E%3C/defs%3E" +
+        "%3Crect fill='url(%23g)' width='600' height='450'/%3E" +
+        "%3Ccircle cx='300' cy='180' r='60' fill='none' stroke='%233B82F6' stroke-width='2' opacity='0.3'/%3E" +
+        "%3Cpath d='M280 200 L300 140 L320 200 M290 185 H310' fill='none' stroke='%233B82F6' stroke-width='2.5' stroke-linecap='round' opacity='0.5'/%3E" +
+        "%3Ctext x='300' y='280' fill='white' font-size='16' text-anchor='middle' font-family='sans-serif' font-weight='600'%3E" + encodeURIComponent(n) + "%3C/text%3E" +
+        "%3Ctext x='300' y='310' fill='%233B82F6' font-size='13' text-anchor='middle' font-family='sans-serif'%3E" + encodeURIComponent(b) + "%3C/text%3E" +
+        "%3C/svg%3E";
+};
+
 TN.DEFAULT_PRODUCTS = [
     {
         id: 1, name: "8BitDo Ultimate 2C Wireless Controller", brand: "8BitDo",
         category: "controllers", price: 5490, originalPrice: null,
-        image: "https://placehold.co/600x400/0f1d32/3B82F6?text=8BitDo+Ultimate+2C",
+        image: "https://s.pacn.ws/1/p/1ej/909781.4.jpg",
         badge: "New", rating: 4.8, reviews: 124, stock: "in",
         desc: "Premium wireless gaming controller with Hall Effect joysticks for zero deadzone and lasting durability. Customizable buttons, 1000Hz polling rate, tri-mode connectivity.",
         specs: { "Connectivity": "Bluetooth 5.0 / 2.4GHz / USB-C", "Joysticks": "Hall Effect (zero deadzone)", "Polling Rate": "1000Hz", "Battery": "1000mAh, ~25 hours", "Compatibility": "PC, Switch, Android", "Warranty": "1 Year Official" }
@@ -16,7 +32,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 2, name: "HAVIT Gaming Headphone HV-H2037d", brand: "HAVIT",
         category: "audio", price: 2490, originalPrice: 3100,
-        image: "https://placehold.co/600x400/0f1d32/5DCAA5?text=HAVIT+HV-H2037d",
+        image: "https://www.startech.com.bd/image/cache/catalog/headphone/havit/h2037d/h2037d-03-500x500.webp",
         badge: "-20%", rating: 4.6, reviews: 89, stock: "in",
         desc: "7.1 surround sound gaming headphone with noise-cancelling microphone. Comfortable ear cushions for long gaming sessions.",
         specs: { "Driver": "50mm", "Frequency": "20Hz-20kHz", "Impedance": "32 Ohm", "Mic": "Noise-cancelling, flexible", "Cable": "2.2m braided", "Warranty": "1 Year" }
@@ -24,7 +40,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 3, name: "DeepCool AK400 CPU Cooler", brand: "DeepCool",
         category: "components", price: 2190, originalPrice: null,
-        image: "https://placehold.co/600x400/0f1d32/3B82F6?text=DeepCool+AK400",
+        image: "https://media.box.co.uk/product/8/3/83374000ee33a8433073936476d87eea.jpg",
         badge: null, rating: 4.7, reviews: 67, stock: "in",
         desc: "High-performance tower CPU cooler with 4 direct-touch heat pipes. Compact design with excellent thermal performance.",
         specs: { "Heat Pipes": "4 x 6mm direct-touch", "Fan": "120mm FK120", "Noise": "≤28 dBA", "TDP": "220W", "Socket": "Intel LGA1700/1200, AMD AM4/AM5", "Warranty": "3 Years" }
@@ -32,7 +48,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 4, name: "Havit MS1036 Gaming Mouse", brand: "Havit",
         category: "accessories", price: 890, originalPrice: 1050,
-        image: "https://placehold.co/600x400/0f1d32/facc15?text=Havit+MS1036",
+        image: "https://www.startech.com.bd/image/cache/catalog/mouse/havit/ms1036/ms1036-01-500x500.webp",
         badge: "-15%", rating: 4.5, reviews: 156, stock: "in",
         desc: "Ergonomic gaming mouse with 6 programmable buttons and adjustable DPI up to 12400. RGB lighting with multiple effects.",
         specs: { "DPI": "Up to 12400", "Buttons": "6 programmable", "Polling Rate": "1000Hz", "Lighting": "RGB customizable", "Weight": "85g", "Warranty": "1 Year" }
@@ -40,7 +56,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 5, name: "Razer DeathAdder V3", brand: "Razer",
         category: "accessories", price: 6490, originalPrice: 9990,
-        image: "https://placehold.co/600x400/0f1d32/ef4444?text=Razer+DeathAdder+V3",
+        image: "https://dl.razerzone.com/src2/6128/6128-1-en-v2.png",
         badge: "-35%", rating: 4.9, reviews: 203, stock: "in",
         desc: "Ultra-lightweight ergonomic gaming mouse with Focus Pro 30K sensor. 90-hour battery life, 63g design.",
         specs: { "Sensor": "Focus Pro 30K", "DPI": "Up to 30000", "Weight": "63g", "Battery": "90 hours", "Switches": "90M click durability", "Warranty": "2 Years" }
@@ -48,7 +64,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 6, name: "Logitech G PRO X Headset", brand: "Logitech",
         category: "audio", price: 8990, originalPrice: 12490,
-        image: "https://placehold.co/600x400/0f1d32/3B82F6?text=Logitech+G+PRO+X",
+        image: "https://resource.logitechg.com/content/dam/gaming/en/products/pro-x/pro-headset-gallery-1.png",
         badge: "-28%", rating: 4.7, reviews: 156, stock: "in",
         desc: "Professional gaming headset with DTS:X 2.0 surround sound. Blue VO!CE mic technology for crystal-clear communication.",
         specs: { "Driver": "50mm Pro-G", "Surround": "DTS:X 2.0", "Mic": "Blue VO!CE", "Weight": "320g", "Connection": "3.5mm / USB", "Warranty": "2 Years" }
@@ -56,7 +72,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 7, name: "Corsair K70 RGB Mechanical Keyboard", brand: "Corsair",
         category: "accessories", price: 7190, originalPrice: 11990,
-        image: "https://placehold.co/600x400/0f1d32/3B82F6?text=Corsair+K70+RGB",
+        image: "https://c1.neweggimages.com/productimage/nb640/23-816-119-V13.jpg",
         badge: "-40%", rating: 4.8, reviews: 189, stock: "in",
         desc: "Mechanical gaming keyboard with CHERRY MX switches. Dynamic RGB per-key lighting, aircraft-grade aluminum frame.",
         specs: { "Switches": "CHERRY MX Red", "Lighting": "Per-key RGB", "Frame": "Aircraft-grade aluminum", "Polling Rate": "1000Hz", "Keycaps": "PBT double-shot", "Warranty": "2 Years" }
@@ -64,7 +80,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 8, name: "HyperX Cloud II Gaming Headset", brand: "HyperX",
         category: "audio", price: 4990, originalPrice: 6990,
-        image: "https://placehold.co/600x400/0f1d32/5DCAA5?text=HyperX+Cloud+II",
+        image: "https://hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_1_main.jpg?v=1763563198",
         badge: "-29%", rating: 4.6, reviews: 112, stock: "in",
         desc: "Legendary gaming headset with 7.1 virtual surround sound. Durable aluminum frame with memory foam ear cushions.",
         specs: { "Driver": "53mm", "Surround": "7.1 Virtual", "Frequency": "15Hz-25kHz", "Weight": "309g", "Mic": "Detachable noise-cancelling", "Warranty": "2 Years" }
@@ -72,7 +88,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 9, name: "SteelSeries Rival 5 Gaming Mouse", brand: "SteelSeries",
         category: "accessories", price: 3990, originalPrice: 5990,
-        image: "https://placehold.co/600x400/0f1d32/facc15?text=SteelSeries+Rival+5",
+        image: "https://images.ctfassets.net/hmm5mo4qf4mf/4csGDZSusZa2hwhSlijszd/1125aaded0bf6964b93b21052a52d497/imgbuy_rival5_001.jpg",
         badge: "-33%", rating: 4.7, reviews: 94, stock: "in",
         desc: "Lightweight multi-genre gaming mouse with TrueMove Air sensor. 9 programmable buttons for ultimate versatility.",
         specs: { "Sensor": "TrueMove Air", "DPI": "Up to 18000", "Weight": "85g", "Buttons": "9 programmable", "Switches": "80M clicks", "Warranty": "1 Year" }
@@ -80,7 +96,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 10, name: "Razer BlackWidow V3 Mechanical Keyboard", brand: "Razer",
         category: "accessories", price: 8490, originalPrice: 13990,
-        image: "https://placehold.co/600x400/0f1d32/ef4444?text=BlackWidow+V3",
+        image: "https://dl.razerzone.com/src/3828-1-EN-v1.png",
         badge: "-39%", rating: 4.8, reviews: 143, stock: "in",
         desc: "Full-size mechanical gaming keyboard with Razer Green switches. Doubleshot ABS keycaps, wrist rest included.",
         specs: { "Switches": "Razer Green", "Keycaps": "Doubleshot ABS", "Lighting": "Razer Chroma RGB", "Wrist Rest": "Included", "USB Passthrough": "Yes", "Warranty": "2 Years" }
@@ -88,7 +104,7 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 11, name: "Logitech G502 HERO Gaming Mouse", brand: "Logitech",
         category: "accessories", price: 4490, originalPrice: 5990,
-        image: "https://placehold.co/600x400/0f1d32/3B82F6?text=G502+HERO",
+        image: "https://resource.logitechg.com/content/dam/gaming/en/non-braid/hyjal-g502-hero/2025/g502-hero-mouse-top-angle-gallery-1.png",
         badge: "-25%", rating: 4.8, reviews: 312, stock: "in",
         desc: "HERO 25K sensor gaming mouse with adjustable weights. 11 programmable buttons, LIGHTSYNC RGB.",
         specs: { "Sensor": "HERO 25K", "DPI": "Up to 25600", "Weight": "121g (adjustable)", "Buttons": "11 programmable", "Battery": "Wired", "Warranty": "2 Years" }
@@ -96,12 +112,27 @@ TN.DEFAULT_PRODUCTS = [
     {
         id: 12, name: "AMD Ryzen 5 5600X Processor", brand: "AMD",
         category: "components", price: 14990, originalPrice: 17990,
-        image: "https://placehold.co/600x400/0f1d32/ef4444?text=Ryzen+5+5600X",
+        image: "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-5600x.jpg",
         badge: "-17%", rating: 4.9, reviews: 456, stock: "in",
         desc: "6-core 12-thread desktop processor with excellent gaming performance. 3.7GHz base, 4.6GHz boost clock.",
         specs: { "Cores/Threads": "6 / 12", "Base Clock": "3.7 GHz", "Boost Clock": "4.6 GHz", "Cache": "35MB", "TDP": "65W", "Warranty": "3 Years" }
     }
 ];
+
+/* ---------- Global Image Error Handler ---------- */
+document.addEventListener('error', function (e) {
+    if (e.target.tagName === 'IMG' && !e.target.dataset.fallback) {
+        e.target.dataset.fallback = '1';
+        var name = e.target.alt || 'Product';
+        var brand = '';
+        var card = e.target.closest('.product-card');
+        if (card) {
+            var brandEl = card.querySelector('.product-card__brand');
+            if (brandEl) brand = brandEl.textContent;
+        }
+        e.target.src = TN.productPlaceholder(name, brand);
+    }
+}, true);
 
 TN.data = {
     _key: 'technest_products',
@@ -157,7 +188,6 @@ TN.data = {
 
     filter: function (opts) {
         var products = this.getProducts();
-
         if (opts.category && opts.category !== 'all') {
             products = products.filter(function (p) { return p.category === opts.category; });
         }
@@ -246,7 +276,6 @@ TN.cart = {
     },
 
     getTotal: function () {
-        var self = this;
         return this.getItems().reduce(function (sum, item) {
             var product = TN.data.getProduct(item.id);
             return sum + (product ? product.price * item.qty : 0);

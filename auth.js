@@ -77,23 +77,82 @@ TN.auth = {
         return [];
     },
 
-    /* ---------- Mock Google Sign-In ---------- */
+    /* ---------- Google Sign-In ---------- */
+    showGoogleChooser: function (callback) {
+        var overlay = document.createElement('div');
+        overlay.id = 'googleChooser';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10001;display:flex;align-items:center;justify-content:center';
+
+        var accounts = [
+            { name: 'Tech User', email: 'techuser@gmail.com', avatar: null },
+            { name: 'Gamer Pro', email: 'gamerpro@gmail.com', avatar: null },
+            { name: 'Web Dev', email: 'webdev@gmail.com', avatar: null }
+        ];
+
+        var html = '<div style="background:#fff;border-radius:12px;padding:0;width:380px;max-width:90vw;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)">' +
+            '<div style="padding:24px 24px 16px;border-bottom:1px solid #e0e0e0">' +
+            '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">' +
+            '<svg width="24" height="24" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#34A853" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#FBBC05" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>' +
+            '<span style="font-size:22px;color:#333;font-weight:400">Sign in with Google</span>' +
+            '</div>' +
+            '<p style="color:#5f6368;font-size:14px;margin:0">Choose an account to continue to <strong>TechNest</strong></p>' +
+            '</div>';
+
+        accounts.forEach(function (acc, i) {
+            var initial = acc.name.charAt(0).toUpperCase();
+            var colors = ['#4285F4', '#EA4335', '#34A853'];
+            html += '<div class="google-acc-item" data-idx="' + i + '" style="display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid #f0f0f0">' +
+                '<div style="width:40px;height:40px;border-radius:50%;background:' + colors[i] + ';display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:16px;flex-shrink:0">' + initial + '</div>' +
+                '<div style="flex:1;min-width:0">' +
+                '<div style="font-size:15px;color:#333;font-weight:500">' + acc.name + '</div>' +
+                '<div style="font-size:13px;color:#5f6368;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + acc.email + '</div>' +
+                '</div></div>';
+        });
+
+        html += '<div style="padding:12px 24px;text-align:right">' +
+            '<button id="googleChooserCancel" style="background:none;border:none;color:#1a73e8;font-size:14px;font-weight:500;cursor:pointer;padding:8px 16px;border-radius:4px">Cancel</button>' +
+            '</div></div>';
+
+        overlay.innerHTML = html;
+        document.body.appendChild(overlay);
+
+        overlay.querySelectorAll('.google-acc-item').forEach(function (item) {
+            item.addEventListener('mouseenter', function () { item.style.background = '#f5f5f5'; });
+            item.addEventListener('mouseleave', function () { item.style.background = ''; });
+            item.addEventListener('click', function () {
+                var idx = parseInt(item.dataset.idx);
+                var acc = accounts[idx];
+                var user = {
+                    id: 'google_' + Date.now(),
+                    name: acc.name,
+                    email: acc.email,
+                    avatar: null,
+                    provider: 'google'
+                };
+                TN.auth.setUser(user);
+                overlay.remove();
+                var modal = document.getElementById('loginModal');
+                if (modal) modal.classList.remove('open');
+                if (callback) callback();
+                if (window.location.pathname.includes('login.html')) {
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+
+        document.getElementById('googleChooserCancel').addEventListener('click', function () {
+            overlay.remove();
+        });
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) overlay.remove();
+        });
+    },
+
     googleSignIn: function () {
-        var email = 'user@gmail.com';
-        var name = 'Google User';
-        var user = {
-            id: 'google_' + Date.now(),
-            name: name,
-            email: email,
-            avatar: null,
-            provider: 'google'
-        };
-        this.setUser(user);
-        var modal = document.getElementById('loginModal');
-        if (modal) modal.classList.remove('open');
-        if (window.location.pathname.includes('login.html')) {
-            window.location.href = 'index.html';
-        }
+        var self = this;
+        self.showGoogleChooser(function () {
+            /* redirected or modal closed */
+        });
     },
 
     /* ---------- UI Updates ---------- */
@@ -245,7 +304,7 @@ TN.ui = {
             html += '</div>';
             html += '<div class="cart-sidebar__footer">' +
                 '<div class="cart-sidebar__total"><span>Total:</span><span>৳' + TN.cart.getTotal().toLocaleString() + '</span></div>' +
-                '<button class="btn btn--primary btn--glow" style="width:100%" onclick="TN.ui.closeCart()">Proceed to Checkout</button>' +
+                '<button class="btn btn--primary btn--glow" style="width:100%" onclick="TN.checkout()">Proceed to Checkout</button>' +
                 '</div>';
         }
         sidebar.innerHTML = html;
@@ -427,6 +486,89 @@ TN.toggleWishlist = function (productId, btn) {
                 if (svg2) svg2.setAttribute('fill', 'none');
             }
         }
+    });
+};
+
+/* ---------- Checkout ---------- */
+TN.checkout = function () {
+    TN.auth.requireAuth(function () {
+        var items = TN.cart.getItems();
+        if (items.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+        var total = TN.cart.getTotal();
+        var itemList = '';
+        items.forEach(function (item) {
+            var p = TN.data.getProduct(item.id);
+            if (p) {
+                itemList += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0">' +
+                    '<span style="color:#333">' + p.name + ' × ' + item.qty + '</span>' +
+                    '<span style="color:#333;font-weight:600">৳' + (p.price * item.qty).toLocaleString() + '</span></div>';
+            }
+        });
+
+        var overlay = document.createElement('div');
+        overlay.id = 'checkoutOverlay';
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10002;display:flex;align-items:center;justify-content:center';
+        overlay.innerHTML = '<div style="background:#fff;border-radius:16px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.4)">' +
+            '<div style="padding:24px;border-bottom:1px solid #e0e0e0;display:flex;align-items:center;justify-content:space-between">' +
+            '<h2 style="margin:0;font-size:20px;color:#333">Checkout</h2>' +
+            '<button onclick="document.getElementById(\'checkoutOverlay\').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#999">&times;</button>' +
+            '</div>' +
+            '<div style="padding:24px">' +
+            '<h3 style="margin:0 0 12px;font-size:16px;color:#333">Order Summary</h3>' +
+            itemList +
+            '<div style="display:flex;justify-content:space-between;padding:16px 0 0;margin-top:8px;border-top:2px solid #3B82F6">' +
+            '<span style="font-size:18px;font-weight:700;color:#333">Total</span>' +
+            '<span style="font-size:18px;font-weight:700;color:#3B82F6">৳' + total.toLocaleString() + '</span></div>' +
+            '</div>' +
+            '<div style="padding:0 24px 24px">' +
+            '<h3 style="margin:0 0 12px;font-size:16px;color:#333">Delivery Address</h3>' +
+            '<input type="text" id="checkoutName" placeholder="Full Name" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;margin-bottom:8px;font-size:14px;box-sizing:border-box">' +
+            '<input type="tel" id="checkoutPhone" placeholder="Phone Number" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;margin-bottom:8px;font-size:14px;box-sizing:border-box">' +
+            '<textarea id="checkoutAddress" rows="2" placeholder="Delivery Address" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;margin-bottom:16px;font-size:14px;box-sizing:border-box;resize:vertical"></textarea>' +
+            '<h3 style="margin:0 0 12px;font-size:16px;color:#333">Payment Method</h3>' +
+            '<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">' +
+            '<label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:2px solid #3B82F6;border-radius:8px;cursor:pointer;background:#EFF6FF;color:#333;font-size:14px"><input type="radio" name="payMethod" value="cod" checked> Cash on Delivery</label>' +
+            '<label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer;color:#333;font-size:14px"><input type="radio" name="payMethod" value="bkash"> bKash</label>' +
+            '<label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer;color:#333;font-size:14px"><input type="radio" name="payMethod" value="nagad"> Nagad</label>' +
+            '<label style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer;color:#333;font-size:14px"><input type="radio" name="payMethod" value="card"> Card</label>' +
+            '</div>' +
+            '<button id="placeOrderBtn" style="width:100%;padding:14px;background:#3B82F6;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;transition:background 0.2s">Place Order — ৳' + total.toLocaleString() + '</button>' +
+            '</div></div>';
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) overlay.remove();
+        });
+
+        document.getElementById('placeOrderBtn').addEventListener('click', function () {
+            var name = document.getElementById('checkoutName').value.trim();
+            var phone = document.getElementById('checkoutPhone').value.trim();
+            var address = document.getElementById('checkoutAddress').value.trim();
+            if (!name || !phone || !address) {
+                alert('Please fill in all delivery details.');
+                return;
+            }
+            TN.cart.clear();
+            overlay.remove();
+            TN.ui.closeCart();
+
+            var successDiv = document.createElement('div');
+            successDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10003;display:flex;align-items:center;justify-content:center';
+            successDiv.innerHTML = '<div style="background:#fff;border-radius:16px;padding:48px 32px;text-align:center;width:400px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.4)">' +
+                '<div style="width:80px;height:80px;border-radius:50%;background:#34A853;margin:0 auto 20px;display:flex;align-items:center;justify-content:center">' +
+                '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+                '<h2 style="margin:0 0 8px;color:#333">Order Placed!</h2>' +
+                '<p style="color:#666;margin:0 0 24px">Thank you, ' + name + '! Your order has been confirmed. We will contact you at ' + phone + ' for delivery details.</p>' +
+                '<button onclick="this.closest(\'div\').parentElement.parentElement.remove()" style="padding:12px 32px;background:#3B82F6;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">Continue Shopping</button>' +
+                '</div>';
+            document.body.appendChild(successDiv);
+            successDiv.addEventListener('click', function (e) {
+                if (e.target === successDiv) successDiv.remove();
+            });
+        });
     });
 };
 
