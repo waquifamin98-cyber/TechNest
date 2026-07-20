@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | TechNest</title>
+    <meta name="description" content="TechNest admin panel for managing products, orders, and inventory.">
+    <meta name="author" content="TechNest">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://www.technest.com.bd/admin.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Admin Panel | TechNest">
+    <meta property="og:description" content="TechNest admin panel for managing products, orders, and inventory.">
+    <meta property="og:url" content="https://www.technest.com.bd/admin.html">
+    <meta property="og:site_name" content="TechNest">
+    <meta property="og:locale" content="en_BD">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='%233B82F6' stroke-width='4'/><path d='M30 65 L50 25 L70 65 M40 50 H60' fill='none' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ========== STICKY NAVBAR ========== -->
+    <header class="navbar" id="navbar">
+        <nav class="navbar__inner container" aria-label="Main navigation">
+            <a href="index.html" class="navbar__logo" aria-label="TechNest Home">
+                <svg class="navbar__logo-icon" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+                    <circle cx="24" cy="24" r="22" fill="none" stroke="#3B82F6" stroke-width="2.5" opacity="0.8"/>
+                    <circle cx="24" cy="24" r="18" fill="none" stroke="#3B82F6" stroke-width="1" opacity="0.4"/>
+                    <path d="M16 32 L24 14 L32 32 M20 26 H28" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="navbar__wordmark">Tech<span class="navbar__wordmark--blue">Nest</span></span>
+                <span class="navbar__tagline">IT COMPONENTS</span>
+            </a>
+
+            <ul class="navbar__links" id="navLinks">
+                <li><a href="index.html" class="navbar__link">Home</a></li>
+                <li><a href="shop.html" class="navbar__link">Shop</a></li>
+                <li><a href="categories.html" class="navbar__link">Categories</a></li>
+                <li><a href="deals.html" class="navbar__link">Deals</a></li>
+                <li><a href="about.html" class="navbar__link">About</a></li>
+            </ul>
+
+            <div class="navbar__actions">
+                <button class="navbar__icon-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+                <button class="navbar__icon-btn" aria-label="Wishlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="navbar__badge">0</span>
+                </button>
+                <button class="navbar__icon-btn" aria-label="Cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="navbar__badge">2</span>
+                </button>
+                <button class="navbar__icon-btn" aria-label="Account">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <button class="navbar__hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+        <div class="navbar__mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="categories.html">Categories</a></li>
+                <li><a href="deals.html">Deals</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <section class="admin-page">
+            <aside class="admin-sidebar">
+                <h3 class="admin-sidebar__title">Admin Panel</h3>
+                <nav class="admin-sidebar__nav">
+                    <button class="admin-nav-btn admin-nav-btn--active" data-section="dashboard">Dashboard</button>
+                    <button class="admin-nav-btn" data-section="products">Products</button>
+                    <button class="admin-nav-btn" data-section="add-product">Add Product</button>
+                    <button class="admin-nav-btn" data-section="orders">Orders</button>
+                </nav>
+            </aside>
+            <main class="admin-main">
+                <!-- Dashboard Section -->
+                <div id="adminDashboard" class="admin-section admin-section--active">
+                    <h2>Dashboard</h2>
+                    <div class="admin-stats">
+                        <div class="admin-stat-card">
+                            <span class="admin-stat-card__number" id="totalProducts">0</span>
+                            <span class="admin-stat-card__label">Total Products</span>
+                        </div>
+                        <div class="admin-stat-card">
+                            <span class="admin-stat-card__number" id="totalOrders">0</span>
+                            <span class="admin-stat-card__label">Orders</span>
+                        </div>
+                        <div class="admin-stat-card">
+                            <span class="admin-stat-card__number" id="totalRevenue">৳0</span>
+                            <span class="admin-stat-card__label">Revenue</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products List Section -->
+                <div id="adminProducts" class="admin-section">
+                    <div class="admin-section__header">
+                        <h2>All Products</h2>
+                        <button class="btn btn--primary btn--sm" onclick="TN.admin.showSection('add-product')">+ Add Product</button>
+                    </div>
+                    <div class="admin-search">
+                        <input type="text" id="adminSearchInput" placeholder="Search products..." class="admin-search__input">
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductsTable"></tbody>
+                    </table>
+                </div>
+
+                <!-- Add/Edit Product Section -->
+                <div id="adminAddProduct" class="admin-section">
+                    <h2 id="productFormTitle">Add New Product</h2>
+                    <form id="productForm" class="admin-form">
+                        <input type="hidden" id="editProductId">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Product Name *</label>
+                                <input type="text" id="prodName" required placeholder="e.g. Logitech G PRO X">
+                            </div>
+                            <div class="form-group">
+                                <label>Brand *</label>
+                                <input type="text" id="prodBrand" required placeholder="e.g. Logitech">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="prodCategory" required>
+                                    <option value="gaming">Gaming</option>
+                                    <option value="components">PC Components</option>
+                                    <option value="accessories">Accessories</option>
+                                    <option value="audio">Audio</option>
+                                    <option value="controllers">Controllers</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Badge (optional)</label>
+                                <input type="text" id="prodBadge" placeholder="e.g. New, -20%, Hot">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Price (BDT) *</label>
+                                <input type="number" id="prodPrice" required min="0" placeholder="e.g. 5490">
+                            </div>
+                            <div class="form-group">
+                                <label>Original Price (optional)</label>
+                                <input type="number" id="prodOriginalPrice" min="0" placeholder="e.g. 6990">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Image URL *</label>
+                            <input type="url" id="prodImage" required placeholder="https://example.com/image.jpg">
+                            <img id="prodImagePreview" style="max-width:200px;margin-top:8px;border-radius:8px;display:none">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="prodDesc" rows="3" placeholder="Product description"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Rating (0-5)</label>
+                                <input type="number" id="prodRating" min="0" max="5" step="0.1" value="4.5">
+                            </div>
+                            <div class="form-group">
+                                <label>Review Count</label>
+                                <input type="number" id="prodReviews" min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Status</label>
+                                <select id="prodStock">
+                                    <option value="in">In Stock</option>
+                                    <option value="out">Out of Stock</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:12px">
+                            <button type="submit" class="btn btn--primary btn--glow">Save Product</button>
+                            <button type="button" class="btn btn--outline" onclick="TN.admin.cancelEdit()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Orders Section (placeholder) -->
+                <div id="adminOrders" class="admin-section">
+                    <h2>Orders</h2>
+                    <p style="color:var(--gray-400);margin-top:20px">Order management coming soon. Connect to your backend to manage orders.</p>
+                </div>
+            </main>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__top">
+                <div class="footer__brand">
+                    <a href="index.html" class="footer__logo" aria-label="TechNest Home">
+                        <svg viewBox="0 0 48 48" width="36" height="36" aria-hidden="true">
+                            <circle cx="24" cy="24" r="22" fill="none" stroke="#3B82F6" stroke-width="2.5" opacity="0.8"/>
+                            <path d="M16 32 L24 14 L32 32 M20 26 H28" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="footer__wordmark">Tech<span class="footer__wordmark--blue">Nest</span></span>
+                    </a>
+                    <p class="footer__desc">Your trusted source for genuine PC components, gaming peripherals, and IT essentials in Bangladesh. Nationwide delivery, competitive prices, and expert support.</p>
+                </div>
+                <div class="footer__links-group">
+                    <h4 class="footer__heading">Shop</h4>
+                    <ul class="footer__links">
+                        <li><a href="shop.html?cat=gaming">Gaming Accessories</a></li>
+                        <li><a href="shop.html?cat=components">PC Components</a></li>
+                        <li><a href="shop.html?cat=accessories">PC Accessories</a></li>
+                        <li><a href="shop.html?cat=audio">Audio & Headsets</a></li>
+                        <li><a href="shop.html?cat=controllers">Controllers</a></li>
+                    </ul>
+                </div>
+                <div class="footer__links-group">
+                    <h4 class="footer__heading">Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="about.html">FAQ</a></li>
+                        <li><a href="about.html">Shipping Policy</a></li>
+                        <li><a href="about.html">Returns & Warranty</a></li>
+                        <li><a href="contact.html">Track Order</a></li>
+                    </ul>
+                </div>
+                <div class="footer__newsletter">
+                    <h4 class="footer__heading">Stay Updated</h4>
+                    <p class="footer__newsletter-text">Get exclusive deals and new arrivals straight to your inbox.</p>
+                    <form class="footer__form" aria-label="Newsletter signup">
+                        <input type="email" placeholder="Your email address" class="footer__input" aria-label="Email address" required>
+                        <button type="submit" class="btn btn--primary btn--sm">Subscribe</button>
+                    </form>
+                    <div class="footer__social">
+                        <a href="https://facebook.com/technestbd" aria-label="TechNest on Facebook" class="footer__social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="https://instagram.com/technestbd" aria-label="TechNest on Instagram" class="footer__social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p class="footer__copy">&copy; 2026 TechNest. All rights reserved.</p>
+                <div class="footer__contact">
+                    <a href="mailto:info@technest.com.bd">info@technest.com.bd</a>
+                    <a href="tel:+8801700000000">+880 1700-000000</a>
+                </div>
+                <p class="footer__delivery">Nationwide Delivery in Bangladesh</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ==================== Admin Module ====================
+        if (!window.TN) window.TN = {};
+        if (!TN.admin) TN.admin = {};
+
+        var currentSection = 'dashboard';
+        var editingId = null;
+
+        // --- Section Navigation ---
+        TN.admin.showSection = function (section) {
+            currentSection = section;
+            var sections = document.querySelectorAll('.admin-section');
+            var navBtns = document.querySelectorAll('.admin-nav-btn');
+            sections.forEach(function (s) { s.classList.remove('admin-section--active'); });
+            navBtns.forEach(function (b) { b.classList.remove('admin-nav-btn--active'); });
+
+            var sectionId = {
+                'dashboard': 'adminDashboard',
+                'products': 'adminProducts',
+                'add-product': 'adminAddProduct',
+                'orders': 'adminOrders'
+            };
+
+            var target = document.getElementById(sectionId[section]);
+            if (target) target.classList.add('admin-section--active');
+
+            navBtns.forEach(function (b) {
+                if (b.getAttribute('data-section') === section) {
+                    b.classList.add('admin-nav-btn--active');
+                }
+            });
+
+            if (section === 'dashboard') updateDashboard();
+            if (section === 'products') renderProductsTable();
+            if (section === 'add-product') {
+                if (!editingId) resetProductForm();
+            }
+        };
+
+        // Sidebar nav click handlers
+        document.querySelectorAll('.admin-nav-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                editingId = null;
+                TN.admin.showSection(btn.getAttribute('data-section'));
+            });
+        });
+
+        // --- Dashboard Stats ---
+        function updateDashboard() {
+            var products = TN.data.getProducts();
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalOrders').textContent = '0';
+            document.getElementById('totalRevenue').textContent = '৳0';
+        }
+
+        // --- Products Table ---
+        function renderProductsTable(searchTerm) {
+            var products = TN.data.getProducts();
+            var tbody = document.getElementById('adminProductsTable');
+            if (!tbody) return;
+
+            if (searchTerm) {
+                var term = searchTerm.toLowerCase();
+                products = products.filter(function (p) {
+                    return p.name.toLowerCase().indexOf(term) !== -1 ||
+                           p.brand.toLowerCase().indexOf(term) !== -1 ||
+                           p.category.toLowerCase().indexOf(term) !== -1;
+                });
+            }
+
+            tbody.innerHTML = '';
+
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray-400);padding:32px">No products found.</td></tr>';
+                return;
+            }
+
+            products.forEach(function (p) {
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><img src="' + escapeHTML(p.image) + '" alt="' + escapeHTML(p.name) + '" style="width:48px;height:36px;object-fit:cover;border-radius:4px"></td>' +
+                    '<td>' + escapeHTML(p.name) + '</td>' +
+                    '<td>' + escapeHTML(p.brand) + '</td>' +
+                    '<td>' + escapeHTML(p.category) + '</td>' +
+                    '<td>৳' + Number(p.price).toLocaleString() + '</td>' +
+                    '<td><span class="admin-table__stock admin-table__stock--' + p.stock + '">' + (p.stock === 'in' ? 'In Stock' : 'Out') + '</span></td>' +
+                    '<td>' +
+                        '<button class="admin-table__btn admin-table__btn--edit" onclick="TN.admin.editProduct(\'' + p.id + '\')" title="Edit">&#9998;</button>' +
+                        '<button class="admin-table__btn admin-table__btn--delete" onclick="TN.admin.deleteProduct(\'' + p.id + '\')" title="Delete">&#128465;</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHTML(str) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str || ''));
+            return div.innerHTML;
+        }
+
+        // --- Search ---
+        var searchInput = document.getElementById('adminSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                renderProductsTable(searchInput.value);
+            });
+        }
+
+        // --- Product Form ---
+        var productForm = document.getElementById('productForm');
+        var imagePreview = document.getElementById('prodImagePreview');
+        var prodImageInput = document.getElementById('prodImage');
+
+        if (prodImageInput) {
+            prodImageInput.addEventListener('input', function () {
+                var url = prodImageInput.value.trim();
+                if (url) {
+                    imagePreview.src = url;
+                    imagePreview.style.display = 'block';
+                    imagePreview.onerror = function () {
+                        imagePreview.style.display = 'none';
+                    };
+                } else {
+                    imagePreview.style.display = 'none';
+                }
+            });
+        }
+
+        if (productForm) {
+            productForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                var productData = {
+                    name: document.getElementById('prodName').value.trim(),
+                    brand: document.getElementById('prodBrand').value.trim(),
+                    category: document.getElementById('prodCategory').value,
+                    badge: document.getElementById('prodBadge').value.trim(),
+                    price: parseInt(document.getElementById('prodPrice').value) || 0,
+                    originalPrice: parseInt(document.getElementById('prodOriginalPrice').value) || 0,
+                    image: document.getElementById('prodImage').value.trim(),
+                    description: document.getElementById('prodDesc').value.trim(),
+                    rating: parseFloat(document.getElementById('prodRating').value) || 4.5,
+                    reviews: parseInt(document.getElementById('prodReviews').value) || 0,
+                    stock: document.getElementById('prodStock').value
+                };
+
+                if (!productData.name || !productData.brand || !productData.image || !productData.price) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                if (editingId) {
+                    TN.data.updateProduct(editingId, productData);
+                    alert('Product updated successfully!');
+                } else {
+                    TN.data.addProduct(productData);
+                    alert('Product added successfully!');
+                }
+
+                editingId = null;
+                resetProductForm();
+                TN.admin.showSection('products');
+            });
+        }
+
+        function resetProductForm() {
+            var form = document.getElementById('productForm');
+            if (form) form.reset();
+            document.getElementById('editProductId').value = '';
+            document.getElementById('productFormTitle').textContent = 'Add New Product';
+            imagePreview.style.display = 'none';
+            editingId = null;
+        }
+
+        // --- Edit Product ---
+        TN.admin.editProduct = function (id) {
+            var products = TN.data.getProducts();
+            var product = products.find(function (p) { return p.id === id; });
+            if (!product) return;
+
+            editingId = id;
+            document.getElementById('editProductId').value = id;
+            document.getElementById('productFormTitle').textContent = 'Edit Product';
+            document.getElementById('prodName').value = product.name || '';
+            document.getElementById('prodBrand').value = product.brand || '';
+            document.getElementById('prodCategory').value = product.category || 'gaming';
+            document.getElementById('prodBadge').value = product.badge || '';
+            document.getElementById('prodPrice').value = product.price || '';
+            document.getElementById('prodOriginalPrice').value = product.originalPrice || '';
+            document.getElementById('prodImage').value = product.image || '';
+            document.getElementById('prodDesc').value = product.description || '';
+            document.getElementById('prodRating').value = product.rating || 4.5;
+            document.getElementById('prodReviews').value = product.reviews || 0;
+            document.getElementById('prodStock').value = product.stock || 'in';
+
+            if (product.image) {
+                imagePreview.src = product.image;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
+
+            TN.admin.showSection('add-product');
+        };
+
+        // --- Cancel Edit ---
+        TN.admin.cancelEdit = function () {
+            editingId = null;
+            resetProductForm();
+            TN.admin.showSection('products');
+        };
+
+        // --- Delete Product ---
+        TN.admin.deleteProduct = function (id) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            TN.data.deleteProduct(id);
+            renderProductsTable();
+        };
+
+        // --- Navbar Scroll ---
+        var navbar = document.getElementById('navbar');
+        function handleNavScroll() {
+            if (window.scrollY > 40) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+        window.addEventListener('scroll', handleNavScroll, { passive: true });
+        handleNavScroll();
+
+        // --- Mobile Hamburger ---
+        var hamburger = document.getElementById('hamburger');
+        var mobileMenu = document.getElementById('mobileMenu');
+        hamburger.addEventListener('click', function () {
+            var isOpen = mobileMenu.classList.toggle('open');
+            hamburger.classList.toggle('active');
+            hamburger.setAttribute('aria-expanded', isOpen);
+        });
+        mobileMenu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                mobileMenu.classList.remove('open');
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // --- Init ---
+        updateDashboard();
+        renderProductsTable();
+
+    })();
+    </script>
+</body>
+</html>

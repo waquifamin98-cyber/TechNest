@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All Products | TechNest Bangladesh</title>
+    <meta name="description" content="Browse 500+ genuine PC components, gaming peripherals, and IT accessories at TechNest. Shop by category, filter by price, and find the best deals in Bangladesh.">
+    <meta name="keywords" content="shop PC components Bangladesh, gaming peripherals, IT accessories, computer parts online, TechNest shop">
+    <meta name="author" content="TechNest">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.technest.com.bd/shop">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Shop All Products | TechNest Bangladesh">
+    <meta property="og:description" content="Browse 500+ genuine PC components, gaming peripherals, and IT accessories at TechNest. Shop by category, filter by price, and find the best deals in Bangladesh.">
+    <meta property="og:image" content="https://www.technest.com.bd/images/og-cover.jpg">
+    <meta property="og:url" content="https://www.technest.com.bd/shop">
+    <meta property="og:site_name" content="TechNest">
+    <meta property="og:locale" content="en_BD">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Shop All Products | TechNest Bangladesh">
+    <meta name="twitter:description" content="Browse 500+ genuine PC components, gaming peripherals, and IT accessories at TechNest.">
+    <meta name="twitter:image" content="https://www.technest.com.bd/images/og-cover.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='%233B82F6' stroke-width='4'/><path d='M30 65 L50 25 L70 65 M40 50 H60' fill='none' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "TechNest",
+        "url": "https://www.technest.com.bd",
+        "logo": "https://www.technest.com.bd/images/logo.png",
+        "description": "TechNest is a premium technology and gaming store in Bangladesh selling genuine PC components, gaming peripherals, and IT essentials.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BD"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "Bangladesh"
+        },
+        "sameAs": [
+            "https://www.facebook.com/technestbd",
+            "https://www.instagram.com/technestbd"
+        ]
+    }
+    </script>
+
+    <!-- Structured Data: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.technest.com.bd/" },
+            { "@type": "ListItem", "position": 2, "name": "Shop", "item": "https://www.technest.com.bd/shop" }
+        ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ========== STICKY NAVBAR ========== -->
+    <header class="navbar" id="navbar">
+        <nav class="navbar__inner container" aria-label="Main navigation">
+            <a href="index.html" class="navbar__logo" aria-label="TechNest Home">
+                <svg class="navbar__logo-icon" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+                    <circle cx="24" cy="24" r="22" fill="none" stroke="#3B82F6" stroke-width="2.5" opacity="0.8"/>
+                    <circle cx="24" cy="24" r="18" fill="none" stroke="#3B82F6" stroke-width="1" opacity="0.4"/>
+                    <path d="M16 32 L24 14 L32 32 M20 26 H28" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="navbar__wordmark">Tech<span class="navbar__wordmark--blue">Nest</span></span>
+                <span class="navbar__tagline">IT COMPONENTS</span>
+            </a>
+
+            <ul class="navbar__links" id="navLinks">
+                <li><a href="index.html" class="navbar__link">Home</a></li>
+                <li><a href="shop.html" class="navbar__link navbar__link--active">Shop</a></li>
+                <li><a href="categories.html" class="navbar__link">Categories</a></li>
+                <li><a href="deals.html" class="navbar__link">Deals</a></li>
+                <li><a href="about.html" class="navbar__link">About</a></li>
+            </ul>
+
+            <div class="navbar__actions">
+                <button class="navbar__icon-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </button>
+                <button class="navbar__icon-btn" aria-label="Wishlist">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="navbar__badge">0</span>
+                </button>
+                <button class="navbar__icon-btn" aria-label="Cart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span class="navbar__badge">2</span>
+                </button>
+                <button class="navbar__icon-btn" aria-label="Account">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <button class="navbar__hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+        <div class="navbar__mobile-menu" id="mobileMenu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="categories.html">Categories</a></li>
+                <li><a href="deals.html">Deals</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- ========== PAGE BANNER ========== -->
+        <section class="page-banner">
+            <div class="container">
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="index.html">Home</a> / <span>Shop</span>
+                </nav>
+                <h1 class="page-banner__title">Shop All Products</h1>
+                <p class="page-banner__sub">500+ genuine tech products at competitive prices</p>
+            </div>
+        </section>
+
+        <!-- ========== SHOP LAYOUT ========== -->
+        <section class="shop">
+            <div class="container shop__layout">
+                <!-- Sidebar -->
+                <aside class="shop__sidebar">
+                    <div class="filter-group">
+                        <h3 class="filter-group__title">Categories</h3>
+                        <ul class="filter-group__list" id="categoryFilters">
+                            <li><label class="filter-check"><input type="checkbox" checked data-cat="all"> All Products</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-cat="gaming"> Gaming Accessories</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-cat="components"> PC Components</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-cat="accessories"> PC Accessories</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-cat="audio"> Audio & Headsets</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-cat="controllers"> Controllers</label></li>
+                        </ul>
+                    </div>
+                    <div class="filter-group">
+                        <h3 class="filter-group__title">Price Range</h3>
+                        <ul class="filter-group__list" id="priceFilters">
+                            <li><label class="filter-check"><input type="radio" name="price" checked data-min="0" data-max="0"> All Prices</label></li>
+                            <li><label class="filter-check"><input type="radio" name="price" data-min="0" data-max="1000"> Under ৳1,000</label></li>
+                            <li><label class="filter-check"><input type="radio" name="price" data-min="1000" data-max="3000"> ৳1,000 - ৳3,000</label></li>
+                            <li><label class="filter-check"><input type="radio" name="price" data-min="3000" data-max="5000"> ৳3,000 - ৳5,000</label></li>
+                            <li><label class="filter-check"><input type="radio" name="price" data-min="5000" data-max="10000"> ৳5,000 - ৳10,000</label></li>
+                            <li><label class="filter-check"><input type="radio" name="price" data-min="10000" data-max="999999"> ৳10,000+</label></li>
+                        </ul>
+                    </div>
+                    <div class="filter-group">
+                        <h3 class="filter-group__title">Brand</h3>
+                        <ul class="filter-group__list" id="brandFilters">
+                            <li><label class="filter-check"><input type="checkbox" data-brand="8BitDo"> 8BitDo</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-brand="Corsair"> Corsair</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-brand="DeepCool"> DeepCool</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-brand="HAVIT"> HAVIT</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-brand="Logitech"> Logitech</label></li>
+                            <li><label class="filter-check"><input type="checkbox" data-brand="Razer"> Razer</label></li>
+                        </ul>
+                    </div>
+                    <button class="btn btn--primary btn--sm" style="width:100%" id="applyFiltersBtn">Apply Filters</button>
+                </aside>
+
+                <!-- Product Grid -->
+                <div class="shop__main">
+                    <div class="shop__toolbar">
+                        <span class="shop__count" id="shopCount">Showing 0 of 0 products</span>
+                        <div class="shop__toolbar-actions">
+                            <input type="text" id="shopSearchInput" class="shop__search-input" placeholder="Search products..." aria-label="Search products">
+                            <select class="shop__sort" id="shopSort" aria-label="Sort products">
+                                <option value="featured">Sort by: Featured</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="newest">Newest First</option>
+                                <option value="rating">Best Rating</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="product-grid" id="shopProductGrid"></div>
+                    <div class="shop__pagination" id="shopPagination"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__top">
+                <div class="footer__brand">
+                    <a href="index.html" class="footer__logo" aria-label="TechNest Home">
+                        <svg viewBox="0 0 48 48" width="36" height="36" aria-hidden="true">
+                            <circle cx="24" cy="24" r="22" fill="none" stroke="#3B82F6" stroke-width="2.5" opacity="0.8"/>
+                            <path d="M16 32 L24 14 L32 32 M20 26 H28" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="footer__wordmark">Tech<span class="footer__wordmark--blue">Nest</span></span>
+                    </a>
+                    <p class="footer__desc">Your trusted source for genuine PC components, gaming peripherals, and IT essentials in Bangladesh. Nationwide delivery, competitive prices, and expert support.</p>
+                </div>
+                <div class="footer__links-group">
+                    <h4 class="footer__heading">Shop</h4>
+                    <ul class="footer__links">
+                        <li><a href="shop.html?cat=gaming">Gaming Accessories</a></li>
+                        <li><a href="shop.html?cat=components">PC Components</a></li>
+                        <li><a href="shop.html?cat=accessories">PC Accessories</a></li>
+                        <li><a href="shop.html?cat=audio">Audio & Headsets</a></li>
+                        <li><a href="shop.html?cat=controllers">Controllers</a></li>
+                    </ul>
+                </div>
+                <div class="footer__links-group">
+                    <h4 class="footer__heading">Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="about.html">FAQ</a></li>
+                        <li><a href="about.html">Shipping Policy</a></li>
+                        <li><a href="about.html">Returns & Warranty</a></li>
+                        <li><a href="contact.html">Track Order</a></li>
+                    </ul>
+                </div>
+                <div class="footer__newsletter">
+                    <h4 class="footer__heading">Stay Updated</h4>
+                    <p class="footer__newsletter-text">Get exclusive deals and new arrivals straight to your inbox.</p>
+                    <form class="footer__form" aria-label="Newsletter signup">
+                        <input type="email" placeholder="Your email address" class="footer__input" aria-label="Email address" required>
+                        <button type="submit" class="btn btn--primary btn--sm">Subscribe</button>
+                    </form>
+                    <div class="footer__social">
+                        <a href="https://facebook.com/technestbd" aria-label="TechNest on Facebook" class="footer__social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="https://instagram.com/technestbd" aria-label="TechNest on Instagram" class="footer__social-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p class="footer__copy">&copy; 2026 TechNest. All rights reserved.</p>
+                <div class="footer__contact">
+                    <a href="mailto:info@technest.com.bd">info@technest.com.bd</a>
+                    <a href="tel:+8801700000000">+880 1700-000000</a>
+                </div>
+                <p class="footer__delivery">Nationwide Delivery in Bangladesh</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        var PER_PAGE = 12;
+        var currentPage = 1;
+        var currentProducts = [];
+        var searchQuery = '';
+
+        var grid = document.getElementById('shopProductGrid');
+        var countEl = document.getElementById('shopCount');
+        var sortEl = document.getElementById('shopSort');
+        var paginationEl = document.getElementById('shopPagination');
+        var searchInput = document.getElementById('shopSearchInput');
+        var applyBtn = document.getElementById('applyFiltersBtn');
+
+        var placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%230f1d32' width='400' height='300'/%3E%3Ctext x='200' y='150' fill='%233B82F6' font-size='14' text-anchor='middle' font-family='sans-serif'%3EImage Unavailable%3C/text%3E%3C/svg%3E";
+
+        /* --- URL Params --- */
+        var urlParams = new URLSearchParams(window.location.search);
+        var paramCat = urlParams.get('cat') || '';
+        var paramQ = urlParams.get('q') || '';
+
+        /* --- Init filters from URL --- */
+        if (paramCat) {
+            var catCheckboxes = document.querySelectorAll('#categoryFilters input[data-cat]');
+            catCheckboxes.forEach(function(cb) {
+                cb.checked = (cb.getAttribute('data-cat') === paramCat);
+            });
+        }
+        if (paramQ) {
+            searchQuery = paramQ;
+            if (searchInput) searchInput.value = paramQ;
+        }
+
+        /* --- Read current filter state --- */
+        function getFilters() {
+            var cats = [];
+            document.querySelectorAll('#categoryFilters input[data-cat]').forEach(function(cb) {
+                if (cb.checked && cb.getAttribute('data-cat') !== 'all') {
+                    cats.push(cb.getAttribute('data-cat'));
+                }
+            });
+
+            var priceMin = 0, priceMax = 0;
+            document.querySelectorAll('#priceFilters input[type="radio"]').forEach(function(r) {
+                if (r.checked) {
+                    priceMin = parseInt(r.getAttribute('data-min')) || 0;
+                    priceMax = parseInt(r.getAttribute('data-max')) || 0;
+                }
+            });
+
+            var brands = [];
+            document.querySelectorAll('#brandFilters input[data-brand]').forEach(function(cb) {
+                if (cb.checked) brands.push(cb.getAttribute('data-brand'));
+            });
+
+            return { cats: cats, priceMin: priceMin, priceMax: priceMax, brands: brands };
+        }
+
+        /* --- Build star SVGs --- */
+        function buildStars(rating) {
+            var full = Math.floor(rating);
+            var half = rating % 1 >= 0.5 ? 1 : 0;
+            var empty = 5 - full - half;
+            var svg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+            var emptySvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+            return svg.repeat(full) + (half ? svg : '') + emptySvg.repeat(empty);
+        }
+
+        /* --- Render product card --- */
+        function renderCard(p) {
+            var hasWishlist = TN.wishlist.has(p.id);
+            var badgeHtml = p.badge
+                ? '<div class="product-card__badge' + (p.badge.startsWith('-') ? ' product-card__badge--sale' : '') + '">' + p.badge + '</div>'
+                : '';
+            var origPriceHtml = p.originalPrice
+                ? '<span class="product-card__original-price">\u09F3' + p.originalPrice.toLocaleString() + '</span>'
+                : '';
+
+            return '<article class="product-card">'
+                + badgeHtml
+                + '<button class="product-card__wishlist" data-wishlist-id="' + p.id + '" onclick="TN.toggleWishlist(' + p.id + ',this)" aria-label="Add to wishlist">'
+                + '<svg width="18" height="18" viewBox="0 0 24 24" fill="' + (hasWishlist ? '#ef4444' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+                + '</button>'
+                + '<a href="product.html?id=' + p.id + '" class="product-card__image">'
+                + '<img src="' + (p.image || placeholderImg) + '" alt="' + p.name + ' - TechNest Bangladesh" loading="lazy" width="400" height="300" onerror="this.src=\'' + placeholderImg + '\'">'
+                + '</a>'
+                + '<div class="product-card__body">'
+                + '<span class="product-card__brand">' + p.brand + '</span>'
+                + '<h3 class="product-card__name"><a href="product.html?id=' + p.id + '">' + p.name + '</a></h3>'
+                + '<div class="product-card__rating">'
+                + '<div class="stars">' + buildStars(p.rating) + '</div>'
+                + '<span class="product-card__rating-text">' + p.rating + ' (' + p.reviews + ')</span>'
+                + '</div>'
+                + '<div class="product-card__pricing">'
+                + '<span class="product-card__price">\u09F3' + p.price.toLocaleString() + '</span>'
+                + origPriceHtml
+                + '</div>'
+                + '<span class="product-card__stock product-card__stock--' + p.stock + '">' + (p.stock === 'in' ? 'In Stock' : 'Out of Stock') + '</span>'
+                + '<button class="btn btn--primary btn--sm product-card__cta" onclick="TN.addToCart(' + p.id + ')"' + (p.stock === 'out' ? ' disabled' : '') + '>Add to Cart</button>'
+                + '</div>'
+                + '</article>';
+        }
+
+        /* --- Render pagination --- */
+        function renderPagination(totalPages) {
+            var html = '';
+            for (var i = 1; i <= totalPages; i++) {
+                html += '<button class="pagination__btn' + (i === currentPage ? ' pagination__btn--active' : '') + '" data-page="' + i + '">' + i + '</button>';
+            }
+            if (totalPages > 1) {
+                html += '<button class="pagination__btn pagination__btn--next" data-page="next">Next &rarr;</button>';
+            }
+            paginationEl.innerHTML = html;
+
+            paginationEl.querySelectorAll('.pagination__btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var pg = btn.getAttribute('data-page');
+                    if (pg === 'next') {
+                        if (currentPage < totalPages) currentPage++;
+                    } else {
+                        currentPage = parseInt(pg);
+                    }
+                    renderProducts();
+                    window.scrollTo({ top: document.querySelector('.shop__toolbar').offsetTop - 80, behavior: 'smooth' });
+                });
+            });
+        }
+
+        /* --- Main render function --- */
+        function renderProducts() {
+            var filters = getFilters();
+            var opts = {};
+
+            if (filters.cats.length === 1) {
+                opts.category = filters.cats[0];
+            } else if (filters.cats.length > 1) {
+                opts.category = 'all';
+            }
+
+            if (filters.priceMin > 0) opts.priceMin = filters.priceMin;
+            if (filters.priceMax > 0) opts.priceMax = filters.priceMax;
+
+            if (filters.brands.length === 1) {
+                opts.brand = filters.brands[0];
+            }
+
+            if (searchQuery) opts.query = searchQuery;
+
+            var products = TN.data.filter(opts);
+
+            /* Multi-category filter */
+            if (filters.cats.length > 1) {
+                products = products.filter(function(p) {
+                    return filters.cats.indexOf(p.category) !== -1;
+                });
+            }
+
+            /* Multi-brand filter */
+            if (filters.brands.length > 1) {
+                products = products.filter(function(p) {
+                    return filters.brands.indexOf(p.brand) !== -1;
+                });
+            }
+
+            /* Sort */
+            var sortBy = sortEl ? sortEl.value : 'featured';
+            products = TN.data.sort(products, sortBy);
+
+            currentProducts = products;
+            var total = products.length;
+            var totalPages = Math.ceil(total / PER_PAGE) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            var start = (currentPage - 1) * PER_PAGE;
+            var pageProducts = products.slice(start, start + PER_PAGE);
+
+            /* Render grid */
+            grid.innerHTML = pageProducts.map(renderCard).join('');
+
+            /* Update count */
+            if (countEl) {
+                countEl.textContent = 'Showing ' + total + ' of ' + total + ' products';
+            }
+
+            /* Render pagination */
+            renderPagination(totalPages);
+        }
+
+        /* --- Category checkbox logic --- */
+        document.querySelectorAll('#categoryFilters input[data-cat]').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                var allCb = document.querySelector('#categoryFilters input[data-cat="all"]');
+                if (cb.getAttribute('data-cat') === 'all') {
+                    if (cb.checked) {
+                        document.querySelectorAll('#categoryFilters input[data-cat]').forEach(function(c) {
+                            if (c !== allCb) c.checked = false;
+                        });
+                    }
+                } else {
+                    if (cb.checked) allCb.checked = false;
+                    var anySpecific = false;
+                    document.querySelectorAll('#categoryFilters input[data-cat]').forEach(function(c) {
+                        if (c.getAttribute('data-cat') !== 'all' && c.checked) anySpecific = true;
+                    });
+                    if (!anySpecific) allCb.checked = true;
+                }
+                currentPage = 1;
+                renderProducts();
+            });
+        });
+
+        /* --- Price radio logic --- */
+        document.querySelectorAll('#priceFilters input[type="radio"]').forEach(function(r) {
+            r.addEventListener('change', function() {
+                currentPage = 1;
+                renderProducts();
+            });
+        });
+
+        /* --- Brand checkbox logic --- */
+        document.querySelectorAll('#brandFilters input[data-brand]').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                currentPage = 1;
+                renderProducts();
+            });
+        });
+
+        /* --- Sort change --- */
+        if (sortEl) {
+            sortEl.addEventListener('change', function() {
+                currentPage = 1;
+                renderProducts();
+            });
+        }
+
+        /* --- Search input --- */
+        var searchTimeout;
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    searchQuery = searchInput.value.trim();
+                    currentPage = 1;
+                    renderProducts();
+                }, 300);
+            });
+        }
+
+        /* --- Apply Filters button --- */
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                currentPage = 1;
+                renderProducts();
+            });
+        }
+
+        /* --- Add to Cart global --- */
+        TN.addToCart = function(id) {
+            TN.cart.addItem(id, 1);
+            var btn = document.querySelector('.product-card__cta[onclick="TN.addToCart(' + id + ')"]');
+            if (btn) {
+                var orig = btn.textContent;
+                btn.textContent = 'Added!';
+                btn.style.background = '#22c55e';
+                setTimeout(function() {
+                    btn.textContent = orig;
+                    btn.style.background = '';
+                }, 1200);
+            }
+        };
+
+        /* --- Toggle Wishlist global --- */
+        TN.toggleWishlist = function(id, btn) {
+            var added = TN.wishlist.toggle(id);
+            var svg = btn.querySelector('svg');
+            if (added) {
+                svg.setAttribute('fill', '#ef4444');
+                btn.style.color = '#ef4444';
+            } else {
+                svg.setAttribute('fill', 'none');
+                btn.style.color = '';
+            }
+        };
+
+        /* --- Init --- */
+        renderProducts();
+
+    })();
+    </script>
+</body>
+</html>
