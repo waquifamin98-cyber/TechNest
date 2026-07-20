@@ -7,7 +7,6 @@ var TN = window.TN || {};
 TN.auth = {
     _key: 'technest_user',
 
-    /* ---------- User State ---------- */
     getUser: function () {
         var stored = localStorage.getItem(this._key);
         if (stored) { try { return JSON.parse(stored); } catch (e) { /* ignore */ } }
@@ -28,73 +27,10 @@ TN.auth = {
         localStorage.removeItem(this._key);
         this.updateUI();
         window.dispatchEvent(new Event('auth-updated'));
-        // Sign out from Google if available
-        if (window.google && google.accounts && google.accounts.id) {
-            google.accounts.id.disableAutoSelect();
-        }
     },
 
-    /* ---------- Google Sign-In ---------- */
-    // To use real Google Sign-In:
-    // 1. Go to https://console.cloud.google.com
-    // 2. Create OAuth 2.0 Client ID (Web application)
-    // 3. Add authorized JavaScript origins (your domain)
-    // 4. Replace the client ID below
-    CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
-
-    initGoogle: function () {
-        var self = this;
-        if (typeof google === 'undefined' || !google.accounts) {
-            // Google script not loaded, skip
-            return;
-        }
-        google.accounts.id.initialize({
-            client_id: self.CLIENT_ID,
-            callback: self._handleGoogleResponse.bind(self)
-        });
-    },
-
-    _handleGoogleResponse: function (response) {
-        var payload = JSON.parse(atob(response.credential.split('.')[1]));
-        var user = {
-            id: payload.sub,
-            name: payload.name,
-            email: payload.email,
-            avatar: payload.picture,
-            provider: 'google'
-        };
-        this.setUser(user);
-        // Close login modal if open
-        var modal = document.getElementById('loginModal');
-        if (modal) modal.classList.remove('open');
-        // Redirect if on login page
-        if (window.location.pathname.includes('login.html')) {
-            window.location.href = 'index.html';
-        }
-    },
-
-    renderGoogleButton: function (containerId) {
-        var self = this;
-        if (typeof google === 'undefined' || !google.accounts) {
-            // Fallback: show message
-            var el = document.getElementById(containerId);
-            if (el) el.innerHTML = '<p style="color:var(--gray-400);font-size:0.9rem;">Google Sign-In requires a valid Client ID. Use email/password below.</p>';
-            return;
-        }
-        google.accounts.id.initialize({
-            client_id: self.CLIENT_ID,
-            callback: self._handleGoogleResponse.bind(self)
-        });
-        google.accounts.id.renderButton(
-            document.getElementById(containerId),
-            { theme: 'filled_blue', size: 'large', width: 300, text: 'signin_with' }
-        );
-    },
-
-    /* ---------- Email/Password (Local Mock) ---------- */
+    /* ---------- Email/Password (Local) ---------- */
     login: function (email, password) {
-        // In production, this would be an API call
-        // For demo, we accept any valid email + password >= 6 chars
         if (!email || !password || password.length < 6) {
             return { success: false, error: 'Invalid email or password (min 6 characters)' };
         }
@@ -105,7 +41,6 @@ TN.auth = {
                 return { success: false, error: 'Incorrect password' };
             }
         } else {
-            // Auto-register
             user = { id: Date.now(), name: email.split('@')[0], email: email, password: password, avatar: null, provider: 'local' };
             users.push(user);
             localStorage.setItem('technest_users', JSON.stringify(users));
@@ -142,6 +77,25 @@ TN.auth = {
         return [];
     },
 
+    /* ---------- Mock Google Sign-In ---------- */
+    googleSignIn: function () {
+        var email = 'user@gmail.com';
+        var name = 'Google User';
+        var user = {
+            id: 'google_' + Date.now(),
+            name: name,
+            email: email,
+            avatar: null,
+            provider: 'google'
+        };
+        this.setUser(user);
+        var modal = document.getElementById('loginModal');
+        if (modal) modal.classList.remove('open');
+        if (window.location.pathname.includes('login.html')) {
+            window.location.href = 'index.html';
+        }
+    },
+
     /* ---------- UI Updates ---------- */
     updateUI: function () {
         var user = this.getUser();
@@ -166,7 +120,6 @@ TN.auth = {
         });
     },
 
-    /* ---------- Require Auth ---------- */
     requireAuth: function (callback) {
         if (this.isLoggedIn()) {
             callback();
@@ -178,8 +131,12 @@ TN.auth = {
 
 /* ---------- UI Helper ---------- */
 TN.ui = {
+    _pendingCallback: null,
+
     showLoginPrompt: function (onLogin) {
-        // Create modal if not exists
+        var self = this;
+        self._pendingCallback = onLogin;
+
         var modal = document.getElementById('loginModal');
         if (!modal) {
             modal = document.createElement('div');
@@ -188,46 +145,47 @@ TN.ui = {
             modal.innerHTML = '<div class="modal">' +
                 '<button class="modal__close" onclick="TN.ui.closeLoginPrompt()">&times;</button>' +
                 '<h2 class="modal__title">Sign in to Continue</h2>' +
-                '<p class="modal__text">You need to be signed in to add items to your cart.</p>' +
-                '<div id="googleSignInBtn" style="display:flex;justify-content:center;margin-bottom:16px"></div>' +
-                '<div class="modal__divider"><span>or</span></div>' +
+                '<p class="modal__text">You need to be signed in to add items to your cart and wishlist.</p>' +
+                '<button class="btn btn--google" onclick="TN.auth.googleSignIn()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border:1px solid var(--gray-600);border-radius:var(--radius-sm);color:var(--white);font-weight:600;margin-bottom:16px;background:var(--navy-mid)">' +
+                '<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#34A853" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#FBBC05" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>' +
+                'Continue with Google' +
+                '</button>' +
+                '<div class="modal__divider"><span>or sign in with email</span></div>' +
                 '<form id="modalLoginForm" class="modal__form">' +
                 '<input type="email" placeholder="Email" required class="modal__input">' +
                 '<input type="password" placeholder="Password (min 6 chars)" required minlength="6" class="modal__input">' +
+                '<div id="modalLoginError" class="modal__error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:8px"></div>' +
                 '<button type="submit" class="btn btn--primary btn--glow" style="width:100%">Sign In</button>' +
                 '</form>' +
-                '<p class="modal__footer">Don\'t have an account? <a href="login.html" style="color:var(--blue)">Sign Up</a></p>' +
+                '<p class="modal__footer" style="margin-top:16px;text-align:center;color:var(--gray-400);font-size:0.9rem">Don\'t have an account? <a href="login.html" style="color:var(--blue)">Sign Up</a></p>' +
                 '</div>';
             document.body.appendChild(modal);
 
-            // Handle form submit
             document.getElementById('modalLoginForm').addEventListener('submit', function (e) {
                 e.preventDefault();
                 var email = this.querySelector('input[type="email"]').value;
                 var password = this.querySelector('input[type="password"]').value;
+                var errorEl = document.getElementById('modalLoginError');
+                errorEl.style.display = 'none';
                 var result = TN.auth.login(email, password);
                 if (result.success) {
                     modal.classList.remove('open');
-                    if (onLogin) onLogin();
+                    if (self._pendingCallback) {
+                        self._pendingCallback();
+                        self._pendingCallback = null;
+                    }
                 } else {
-                    alert(result.error);
+                    errorEl.textContent = result.error;
+                    errorEl.style.display = 'block';
                 }
             });
 
-            // Init Google button
-            setTimeout(function () {
-                TN.auth.renderGoogleButton('googleSignInBtn');
-            }, 100);
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) self.closeLoginPrompt();
+            });
         }
 
-        // Store callback
-        modal._onLogin = onLogin;
         modal.classList.add('open');
-
-        // Re-init Google button each time
-        setTimeout(function () {
-            TN.auth.renderGoogleButton('googleSignInBtn');
-        }, 200);
     },
 
     closeLoginPrompt: function () {
@@ -263,14 +221,14 @@ TN.ui = {
             '</div>';
 
         if (items.length === 0) {
-            html += '<div class="cart-sidebar__empty"><p>Your cart is empty</p><a href="shop.html" class="btn btn--primary btn--sm">Browse Products</a></div>';
+            html += '<div class="cart-sidebar__empty"><p>Your cart is empty</p><a href="shop.html" class="btn btn--primary btn--sm" style="margin-top:12px">Browse Products</a></div>';
         } else {
             html += '<div class="cart-sidebar__items">';
             items.forEach(function (item) {
                 var p = TN.data.getProduct(item.id);
                 if (!p) return;
                 html += '<div class="cart-item">' +
-                    '<img src="' + p.image + '" alt="' + p.name + '" class="cart-item__img" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%230f1d32%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%22 y=%2250%22 fill=%22%233B82F6%22 font-size=%2210%22 text-anchor=%22middle%22%3E' + encodeURIComponent(p.name.substring(0, 15)) + '%3C/text%3E%3C/svg%3E\'">' +
+                    '<img src="' + p.image + '" alt="' + p.name + '" class="cart-item__img" onerror="this.style.display=\'none\'">' +
                     '<div class="cart-item__info">' +
                     '<span class="cart-item__brand">' + p.brand + '</span>' +
                     '<span class="cart-item__name">' + p.name + '</span>' +
@@ -287,7 +245,7 @@ TN.ui = {
             html += '</div>';
             html += '<div class="cart-sidebar__footer">' +
                 '<div class="cart-sidebar__total"><span>Total:</span><span>৳' + TN.cart.getTotal().toLocaleString() + '</span></div>' +
-                '<button class="btn btn--primary btn--glow" style="width:100%">Proceed to Checkout</button>' +
+                '<button class="btn btn--primary btn--glow" style="width:100%" onclick="TN.ui.closeCart()">Proceed to Checkout</button>' +
                 '</div>';
         }
         sidebar.innerHTML = html;
@@ -335,14 +293,14 @@ TN.ui = {
             '</div>';
 
         if (ids.length === 0) {
-            html += '<div class="cart-sidebar__empty"><p>Your wishlist is empty</p><a href="shop.html" class="btn btn--primary btn--sm">Browse Products</a></div>';
+            html += '<div class="cart-sidebar__empty"><p>Your wishlist is empty</p><a href="shop.html" class="btn btn--primary btn--sm" style="margin-top:12px">Browse Products</a></div>';
         } else {
             html += '<div class="cart-sidebar__items">';
             ids.forEach(function (id) {
                 var p = TN.data.getProduct(id);
                 if (!p) return;
                 html += '<div class="cart-item">' +
-                    '<img src="' + p.image + '" alt="' + p.name + '" class="cart-item__img" onerror="this.src=\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%230f1d32%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%22 y=%2250%22 fill=%22%233B82F6%22 font-size=%2210%22 text-anchor=%22middle%22%3E' + encodeURIComponent(p.name.substring(0, 15)) + '%3C/text%3E%3C/svg%3E\'">' +
+                    '<img src="' + p.image + '" alt="' + p.name + '" class="cart-item__img" onerror="this.style.display=\'none\'">' +
                     '<div class="cart-item__info">' +
                     '<span class="cart-item__brand">' + p.brand + '</span>' +
                     '<span class="cart-item__name">' + p.name + '</span>' +
@@ -362,7 +320,6 @@ TN.ui = {
     wishlistRemove: function (id) {
         TN.wishlist.toggle(id);
         this.renderWishlist();
-        // Update heart icons on page
         document.querySelectorAll('[data-wishlist-id="' + id + '"]').forEach(function (btn) {
             btn.classList.remove('active');
         });
@@ -427,6 +384,10 @@ TN.ui = {
                     window.location.href = 'shop.html?q=' + encodeURIComponent(input.value.trim());
                 }
             });
+
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) TN.ui.closeSearch();
+            });
         }
         modal.classList.add('open');
         setTimeout(function () {
@@ -458,13 +419,22 @@ TN.toggleWishlist = function (productId, btn) {
         if (btn) {
             if (added) {
                 btn.classList.add('active');
-                btn.querySelector('svg').setAttribute('fill', '#ef4444');
+                var svg = btn.querySelector('svg');
+                if (svg) svg.setAttribute('fill', '#ef4444');
             } else {
                 btn.classList.remove('active');
-                btn.querySelector('svg').setAttribute('fill', 'none');
+                var svg2 = btn.querySelector('svg');
+                if (svg2) svg2.setAttribute('fill', 'none');
             }
         }
     });
 };
+
+/* ---------- Init on DOM Ready ---------- */
+document.addEventListener('DOMContentLoaded', function () {
+    TN.auth.updateUI();
+    TN.cart.updateBadge();
+    TN.wishlist.updateBadge();
+});
 
 window.TN = TN;
