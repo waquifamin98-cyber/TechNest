@@ -337,149 +337,146 @@ TN.auth.updateUI();
 </div>
 <script>
 (function() {
-    function init() {
-        if (typeof TN === 'undefined' || !TN.chat) {
-            setTimeout(init, 100);
-            return;
-        }
-        setupChat();
+    var KEY = 'technest_chats';
+    var SESS = 'technest_chat_session';
+    var email = null;
+    var chatOpen = false;
+
+    function getChats() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) { return []; } }
+    function saveChats(c) { localStorage.setItem(KEY, JSON.stringify(c)); }
+    function getSession() { try { return JSON.parse(localStorage.getItem(SESS)); } catch(e) { return null; } }
+    function setSession(s) { localStorage.setItem(SESS, JSON.stringify(s)); }
+
+    function getBotReply(input) {
+        var m = input.toLowerCase().trim();
+        if (/^(hi|hello|hey|assalam|salam)\b/.test(m)) return "Hello! Welcome to TechNest \u{1F44B} I'm here to help with product info, orders, shipping, and more. What can I help you with?";
+        if (/thank|shukriya|dhonnobad/.test(m)) return "You're welcome! \u{1F60A} Is there anything else?";
+        if (/bye|goodbye|tata/.test(m)) return "Goodbye! Have a great day! \u{1F44B}";
+        if (/who are you|what are you|your name/.test(m)) return "I'm TechNest Bot \u{1F916}, your virtual assistant! I help with products, orders, shipping, and more.";
+        if (/ship|deliver|delivery|courier/.test(m)) return "Nationwide delivery across Bangladesh! \u{1F4E6}\n\n\u2022 Dhaka: 1-2 days\n\u2022 Outside Dhaka: 2-4 days\n\u2022 Remote: 3-5 days\n\nFree shipping on orders over \u09F33,000!";
+        if (/pay|payment|bkash|nagad|card|cash|cod/.test(m)) return "We accept \u{1F4B3}:\n\u2022 bKash\n\u2022 Nagad\n\u2022 VISA / Mastercard\n\u2022 Cash on Delivery\n\nAll payments are secure!";
+        if (/return|refund|warranty|replace|exchange/.test(m)) return "Return policy \u{1F504}:\n\u2022 7-day returns for unused items\n\u2022 Manufacturer warranty\n\u2022 Free returns for defects\n\u2022 Refund in 5-7 days";
+        if (/offer|discount|deal|sale|coupon/.test(m)) return "Current deals \u{1F525}:\n\u2022 Up to 40% off gaming gear\n\u2022 Bundle deals on components\n\u2022 Free shipping over \u09F33,000\n\nCheck our Deals page!";
+        if (/order|track|status/.test(m)) return "Track your order \u{1F4CD}:\n1. Log in to TechNest\n2. Go to Profile \u2192 My Orders\n3. Click order for status\n\nOr email support@technest.com.bd";
+        if (/mouse|keyboard|headset|headphone|controller|monitor/.test(m)) return "Popular picks \u{1F5A5}:\n\u2022 Razer DeathAdder V3 - \u09F36,490\n\u2022 Corsair K70 RGB - \u09F37,190\n\u2022 Logitech G PRO X - \u09F38,990\n\nTell me your budget!";
+        if (/cheap|budget|affordable|best price/.test(m)) return "Budget picks \u{1F4B0}:\n\u2022 Havit MS1036 Mouse - \u09F3890\n\u2022 HAVIT Headphone - \u09F32,490\n\u2022 DeepCool AK400 - \u09F32,190\n\nAll with warranty!";
+        if (/gaming|game|player|pc build|setup/.test(m)) return "Level up! \u{1F3AE}\n\u2022 Gaming mice, keyboards, headsets\n\u2022 Controllers (Xbox, PS, 8BitDo)\n\u2022 PC components for builds\n\nWhat are you building?";
+        if (/price|how much|koto|taka|cost/.test(m)) return "Products range from \u09F3890 to \u09F317,990+! \u{1F4B2}\n\nWhich product interest you?";
+        if (/warranty|guarantee/.test(m)) return "All products have warranty! \u{1F6E1}\n\u2022 Peripherals: 1-2 years\n\u2022 Components: 2-3 years\n\u2022 Processors: 3 years";
+        return "Thanks! \u{1F4AC}\n\nI can help with:\n\u2022 Products & recommendations\n\u2022 Order tracking\n\u2022 Shipping\n\u2022 Payments\n\u2022 Returns & warranty\n\nWhat would you like to know?";
     }
 
-    function setupChat() {
-        var mascotBtn = document.getElementById('mascotBtn');
-        var chatWidget = document.getElementById('chatWidget');
-        var chatClose = document.getElementById('chatClose');
-        var chatBody = document.getElementById('chatBody');
-        var chatFooter = document.getElementById('chatFooter');
-        var chatInput = document.getElementById('chatInput');
-        var chatSend = document.getElementById('chatSend');
-        if (!mascotBtn || !chatWidget) return;
+    function render() {
+        var body = document.getElementById('chatBody');
+        var footer = document.getElementById('chatFooter');
+        var session = getSession();
 
-        var currentEmail = null;
-        var pollTimer = null;
-
-        mascotBtn.addEventListener('click', function() {
-            chatWidget.classList.toggle('open');
-            if (chatWidget.classList.contains('open')) {
-                renderChat();
-                setTimeout(function() { chatInput.focus(); }, 100);
-            } else {
-                stopPolling();
-            }
-        });
-        chatClose.addEventListener('click', function() {
-            chatWidget.classList.remove('open');
-            stopPolling();
-        });
-
-        function renderChat() {
-            var session = TN.chat.getSession();
-            if (!session) {
-                currentEmail = null;
-                chatBody.innerHTML = '<div class="chat-gate">' +
-                    '<div class="chat-gate__icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>' +
-                    '<h3>Welcome to TechNest!</h3>' +
-                    '<p>Enter your email to start chatting with our bot assistant.</p>' +
-                    '<div class="chat-gate__form">' +
-                    '<input type="email" class="chat-gate__input" id="chatEmail" placeholder="your@email.com">' +
-                    '<button class="chat-gate__btn" id="chatVerifyBtn">Start Chat</button>' +
-                    '</div></div>';
-                chatFooter.style.display = 'none';
-                var verifyBtn = document.getElementById('chatVerifyBtn');
-                var emailInput = document.getElementById('chatEmail');
-                verifyBtn.addEventListener('click', function() {
-                    var email = emailInput.value.trim();
-                    if (TN.chat.verifyEmail(email)) {
-                        currentEmail = email;
-                        renderChat();
-                        startPolling();
-                    } else {
-                        emailInput.style.borderColor = '#ef4444';
-                    }
-                });
-                emailInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') verifyBtn.click();
-                });
-                return;
-            }
-
-            currentEmail = session.email;
-            chatFooter.style.display = 'flex';
-            var chat = TN.chat.getChatByEmail(session.email);
-            if (!chat) {
-                TN.chat.verifyEmail(session.email);
-                chat = TN.chat.getChatByEmail(session.email);
-            }
-            chatBody.innerHTML = '';
-            if (chat.messages.length === 0) {
-                chatBody.innerHTML = '<div class="chat-msg chat-msg--bot">Hello ' + esc(session.name) + '! \u{1F44B} I\'m TechNest Bot. Ask me about products, orders, shipping, payments, or anything else!</div>';
-            } else {
-                chat.messages.forEach(function(m) {
-                    var div = document.createElement('div');
-                    div.className = 'chat-msg chat-msg--' + m.sender;
-                    var t = new Date(m.time);
-                    var ts = pad(t.getHours()) + ':' + pad(t.getMinutes());
-                    div.innerHTML = esc(m.text) + '<div class="chat-msg__time">' + ts + '</div>';
-                    chatBody.appendChild(div);
-                });
-            }
-            chatBody.scrollTop = chatBody.scrollHeight;
-            startPolling();
-        }
-
-        function sendMessage() {
-            var text = chatInput.value.trim();
-            if (!text || !currentEmail) return;
-            chatInput.value = '';
-
-            TN.chat.sendMessage(currentEmail, text);
-            renderChat();
-
-            var typing = document.createElement('div');
-            typing.className = 'chat-typing';
-            typing.id = 'chatTyping';
-            typing.innerHTML = '<span></span><span></span><span></span>';
-            chatBody.appendChild(typing);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-
-        function startPolling() {
-            stopPolling();
-            var lastCount = 0;
-            var chat = TN.chat.getChatByEmail(currentEmail);
-            if (chat) lastCount = chat.messages.length;
-
-            pollTimer = setInterval(function() {
-                if (!currentEmail || !chatWidget.classList.contains('open')) {
-                    stopPolling();
+        if (!session) {
+            email = null;
+            footer.style.display = 'none';
+            body.innerHTML = '<div class="chat-gate"><div class="chat-gate__icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3>Welcome to TechNest!</h3><p>Enter your email to start chatting.</p><div class="chat-gate__form"><input type="email" class="chat-gate__input" id="chatEmailInput" placeholder="your@email.com"><button class="chat-gate__btn" id="chatStartBtn">Start Chat</button></div></div>';
+            document.getElementById('chatStartBtn').onclick = function() {
+                var em = document.getElementById('chatEmailInput').value.trim();
+                if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+                    document.getElementById('chatEmailInput').style.borderColor = '#ef4444';
                     return;
                 }
-                var freshChat = TN.chat.getChatByEmail(currentEmail);
-                if (freshChat && freshChat.messages.length > lastCount) {
-                    var typingEl = document.getElementById('chatTyping');
-                    if (typingEl) typingEl.remove();
-                    renderChat();
-                    lastCount = freshChat.messages.length;
+                email = em;
+                setSession({ email: em, name: em.split('@')[0] });
+                var chats = getChats();
+                if (!chats.find(function(c){return c.email===em;})) {
+                    chats.unshift({ email: em, name: em.split('@')[0], messages: [], started: new Date().toISOString() });
+                    saveChats(chats);
                 }
-            }, 300);
+                render();
+            };
+            document.getElementById('chatEmailInput').onkeydown = function(e) { if (e.key==='Enter') document.getElementById('chatStartBtn').click(); };
+            return;
         }
 
-        function stopPolling() {
-            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+        email = session.email;
+        footer.style.display = 'flex';
+        var chats = getChats();
+        var chat = chats.find(function(c){return c.email===email;});
+        if (!chat) {
+            chats.unshift({ email: email, name: session.name, messages: [], started: new Date().toISOString() });
+            saveChats(chats);
+            chat = chats[0];
         }
 
-        chatSend.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
-
-        function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s || '')); return d.innerHTML; }
-        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+        body.innerHTML = '';
+        if (chat.messages.length === 0) {
+            body.innerHTML = '<div class="chat-msg chat-msg--bot">Hello ' + esc(session.name) + '! \u{1F44B} I\'m TechNest Bot. Ask me about products, orders, shipping, payments, or anything else!</div>';
+        } else {
+            chat.messages.forEach(function(msg) {
+                var d = document.createElement('div');
+                d.className = 'chat-msg chat-msg--' + msg.sender;
+                var t = new Date(msg.time);
+                var ts = (t.getHours()<10?'0':'')+t.getHours()+':'+(t.getMinutes()<10?'0':'')+t.getMinutes();
+                d.innerHTML = esc(msg.text) + '<div class="chat-msg__time">' + ts + '</div>';
+                body.appendChild(d);
+            });
+        }
+        body.scrollTop = body.scrollHeight;
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
+    function send() {
+        var input = document.getElementById('chatInput');
+        var text = input.value.trim();
+        if (!text || !email) return;
+        input.value = '';
+
+        var chats = getChats();
+        var chat = chats.find(function(c){return c.email===email;});
+        if (!chat) return;
+
+        chat.messages.push({ id: Date.now(), sender: 'user', text: text, time: new Date().toISOString() });
+        saveChats(chats);
+        render();
+
+        var body = document.getElementById('chatBody');
+        var typing = document.createElement('div');
+        typing.className = 'chat-typing';
+        typing.id = 'typingIndicator';
+        typing.innerHTML = '<span></span><span></span><span></span>';
+        body.appendChild(typing);
+        body.scrollTop = body.scrollHeight;
+
+        var reply = getBotReply(text);
+        setTimeout(function() {
+            var fresh = getChats();
+            var c = fresh.find(function(ch){return ch.email===email;});
+            if (c) {
+                c.messages.push({ id: Date.now()+1, sender: 'bot', text: reply, time: new Date().toISOString() });
+                saveChats(fresh);
+            }
+            var ti = document.getElementById('typingIndicator');
+            if (ti) ti.remove();
+            render();
+        }, 800 + Math.random() * 600);
     }
+
+    function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s||'')); return d.innerHTML; }
+
+    function init() {
+        var btn = document.getElementById('mascotBtn');
+        var widget = document.getElementById('chatWidget');
+        var close = document.getElementById('chatClose');
+        var sendBtn = document.getElementById('chatSend');
+        var input = document.getElementById('chatInput');
+        if (!btn || !widget) { setTimeout(init, 100); return; }
+
+        btn.onclick = function() {
+            chatOpen = !chatOpen;
+            widget.classList.toggle('open', chatOpen);
+            if (chatOpen) { render(); setTimeout(function(){input.focus();},100); }
+        };
+        close.onclick = function() { chatOpen = false; widget.classList.remove('open'); };
+        sendBtn.onclick = send;
+        input.onkeydown = function(e) { if (e.key==='Enter') send(); };
+    }
+
+    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 </script>
 </body>
