@@ -2412,6 +2412,164 @@ ul { list-style: none; }
 /* Wishlist heart active state */
 .product-card__wishlist.active svg { fill: #ef4444; color: #ef4444; }
 
+/* ========== MASCOT ========== */
+.mascot-hero {
+    position: absolute;
+    right: 5%;
+    bottom: 10%;
+    width: 220px;
+    height: 220px;
+    animation: mascotBounce 3s ease-in-out infinite;
+    z-index: 2;
+    pointer-events: none;
+}
+@keyframes mascotBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.mascot-float {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 72px;
+    height: 72px;
+    cursor: pointer;
+    z-index: 999;
+    animation: mascotFloat 4s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(59,130,246,0.4));
+    transition: transform 0.3s;
+}
+.mascot-float:hover {
+    transform: scale(1.1);
+}
+@keyframes mascotFloat {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+}
+.mascot-float__tooltip {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    background: var(--navy-mid);
+    color: var(--white);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    border: 1px solid rgba(59,130,246,0.2);
+}
+.mascot-float:hover .mascot-float__tooltip {
+    opacity: 1;
+}
+
+/* ========== ADMIN MESSAGES ========== */
+.admin-messages__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.admin-message-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(59,130,246,0.1);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    transition: border-color var(--transition);
+}
+.admin-message-card:hover {
+    border-color: rgba(59,130,246,0.3);
+}
+.admin-message-card--unread {
+    border-left: 3px solid var(--blue);
+}
+.admin-message-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+.admin-message-card__from {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+.admin-message-card__email {
+    color: var(--gray-400);
+    font-size: 0.82rem;
+}
+.admin-message-card__date {
+    color: var(--gray-500);
+    font-size: 0.78rem;
+}
+.admin-message-card__subject {
+    display: inline-block;
+    background: rgba(59,130,246,0.15);
+    color: var(--blue);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.admin-message-card__body {
+    color: var(--gray-300);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+.admin-message-card__phone {
+    color: var(--gray-400);
+    font-size: 0.8rem;
+    margin-top: 6px;
+}
+.admin-message-card__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* ========== ADMIN PROFIT GRAPH ========== */
+.admin-graph-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(59,130,246,0.1);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 24px;
+}
+.admin-graph-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--gray-200);
+}
+.admin-graph-card canvas {
+    width: 100% !important;
+    max-height: 280px;
+}
+
+/* ========== ADMIN STATS EXTRA ========== */
+.admin-stats--two {
+    grid-template-columns: repeat(2, 1fr);
+}
+.admin-stat-card--messages .admin-stat-card__number {
+    color: var(--teal);
+}
+
+/* ========== ADMIN EMPTY STATE ========== */
+.admin-empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--gray-400);
+}
+.admin-empty svg {
+    margin-bottom: 16px;
+    opacity: 0.4;
+}
+.admin-empty p {
+    font-size: 0.9rem;
+}
+
 /* Responsive for inner pages */
 @media (max-width: 1024px) {
     .shop__layout { grid-template-columns: 1fr; }

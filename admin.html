@@ -29,6 +29,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <script src="data.js"></script>
     <script src="auth.js"></script>
 </head>
@@ -87,6 +88,7 @@
                     <button class="admin-nav-btn admin-nav-btn--active" data-section="dashboard">Dashboard</button>
                     <button class="admin-nav-btn" data-section="products">Products</button>
                     <button class="admin-nav-btn" data-section="add-product">Add Product</button>
+                    <button class="admin-nav-btn" data-section="messages">Messages <span id="unreadBadge" style="background:var(--danger);color:#fff;font-size:0.7rem;padding:1px 6px;border-radius:10px;margin-left:6px;display:none">0</span></button>
                     <button class="admin-nav-btn" data-section="orders">Orders</button>
                 </nav>
             </aside>
@@ -107,6 +109,14 @@
                             <span class="admin-stat-card__number" id="totalRevenue">৳0</span>
                             <span class="admin-stat-card__label">Revenue</span>
                         </div>
+                        <div class="admin-stat-card admin-stat-card--messages">
+                            <span class="admin-stat-card__number" id="totalMessages">0</span>
+                            <span class="admin-stat-card__label">Messages</span>
+                        </div>
+                    </div>
+                    <div class="admin-graph-card">
+                        <h3>Revenue Overview (Last 6 Months)</h3>
+                        <canvas id="profitChart"></canvas>
                     </div>
                 </div>
 
@@ -214,6 +224,15 @@
                     <h2>Orders</h2>
                     <p style="color:var(--gray-400);margin-top:20px">Order management coming soon. Connect to your backend to manage orders.</p>
                 </div>
+
+                <!-- Messages Section -->
+                <div id="adminMessages" class="admin-section">
+                    <div class="admin-section__header">
+                        <h2>Customer Messages</h2>
+                        <button class="btn btn--outline btn--sm" onclick="TN.admin.markAllRead()">Mark all as read</button>
+                    </div>
+                    <div id="adminMessagesList" class="admin-messages__list"></div>
+                </div>
             </main>
         </section>
     </main>
@@ -287,6 +306,7 @@
 
         var currentSection = 'dashboard';
         var editingId = null;
+        var profitChart = null;
 
         // --- Section Navigation ---
         TN.admin.showSection = function (section) {
@@ -300,7 +320,8 @@
                 'dashboard': 'adminDashboard',
                 'products': 'adminProducts',
                 'add-product': 'adminAddProduct',
-                'orders': 'adminOrders'
+                'orders': 'adminOrders',
+                'messages': 'adminMessages'
             };
 
             var target = document.getElementById(sectionId[section]);
@@ -317,6 +338,7 @@
             if (section === 'add-product') {
                 if (!editingId) resetProductForm();
             }
+            if (section === 'messages') renderMessages();
         };
 
         // Sidebar nav click handlers
@@ -330,9 +352,77 @@
         // --- Dashboard Stats ---
         function updateDashboard() {
             var products = TN.data.getProducts();
+            var messages = TN.messages ? TN.messages.getMessages() : [];
+            var orders = TN.orders ? TN.orders.getOrders() : [];
+            var revenue = TN.orders ? TN.orders.getRevenue() : 0;
             document.getElementById('totalProducts').textContent = products.length;
-            document.getElementById('totalOrders').textContent = '0';
-            document.getElementById('totalRevenue').textContent = '৳0';
+            document.getElementById('totalOrders').textContent = orders.length;
+            document.getElementById('totalRevenue').textContent = '৳' + revenue.toLocaleString();
+            document.getElementById('totalMessages').textContent = messages.length;
+            renderProfitChart();
+        }
+
+        // --- Profit Chart ---
+        function renderProfitChart() {
+            var ctx = document.getElementById('profitChart');
+            if (!ctx) return;
+
+            var monthlyData = TN.orders ? TN.orders.getMonthlyData() : [
+                { label: 'Jan', revenue: 0 }, { label: 'Feb', revenue: 0 },
+                { label: 'Mar', revenue: 0 }, { label: 'Apr', revenue: 0 },
+                { label: 'May', revenue: 0 }, { label: 'Jun', revenue: 0 }
+            ];
+
+            if (profitChart) profitChart.destroy();
+
+            profitChart = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: monthlyData.map(function (d) { return d.label; }),
+                    datasets: [{
+                        label: 'Revenue (৳)',
+                        data: monthlyData.map(function (d) { return d.revenue; }),
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: '#3B82F6',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#94a3b8', font: { family: 'Inter' } }
+                        },
+                        tooltip: {
+                            backgroundColor: '#132240',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(59,130,246,0.3)',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: function (ctx) { return '৳' + ctx.parsed.y.toLocaleString(); }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function (v) { return '৳' + v.toLocaleString(); }
+                            },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        }
+                    }
+                }
+            });
         }
 
         // --- Products Table ---
@@ -380,6 +470,73 @@
             return div.innerHTML;
         }
 
+        // --- Messages ---
+        function renderMessages() {
+            var container = document.getElementById('adminMessagesList');
+            if (!container || !TN.messages) return;
+            var messages = TN.messages.getMessages();
+            container.innerHTML = '';
+
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="admin-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>No messages yet.</p></div>';
+                return;
+            }
+
+            messages.forEach(function (msg) {
+                var card = document.createElement('div');
+                card.className = 'admin-message-card' + (msg.read ? '' : ' admin-message-card--unread');
+                var dateStr = new Date(msg.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                card.innerHTML =
+                    '<div class="admin-message-card__header">' +
+                        '<div>' +
+                            '<div class="admin-message-card__from">' + escapeHTML(msg.name) + '</div>' +
+                            '<div class="admin-message-card__email">' + escapeHTML(msg.email) + '</div>' +
+                        '</div>' +
+                        '<div class="admin-message-card__date">' + dateStr + '</div>' +
+                    '</div>' +
+                    '<div class="admin-message-card__subject">' + escapeHTML(msg.subject) + '</div>' +
+                    '<div class="admin-message-card__body">' + escapeHTML(msg.message) + '</div>' +
+                    (msg.phone ? '<div class="admin-message-card__phone">Phone: ' + escapeHTML(msg.phone) + '</div>' : '') +
+                    '<div class="admin-message-card__actions">' +
+                        '<button class="btn btn--outline btn--sm" onclick="TN.admin.markRead(' + msg.id + ')">Mark Read</button>' +
+                        '<button class="btn btn--outline btn--sm" style="color:var(--danger);border-color:var(--danger)" onclick="TN.admin.deleteMessage(' + msg.id + ')">Delete</button>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+        }
+
+        TN.admin.markRead = function (id) {
+            if (TN.messages) TN.messages.markRead(id);
+            renderMessages();
+            updateUnreadBadge();
+        };
+
+        TN.admin.markAllRead = function () {
+            if (!TN.messages) return;
+            TN.messages.getMessages().forEach(function (m) { TN.messages.markRead(m.id); });
+            renderMessages();
+            updateUnreadBadge();
+        };
+
+        TN.admin.deleteMessage = function (id) {
+            if (!confirm('Delete this message?')) return;
+            if (TN.messages) TN.messages.deleteMessage(id);
+            renderMessages();
+            updateUnreadBadge();
+        };
+
+        function updateUnreadBadge() {
+            var badge = document.getElementById('unreadBadge');
+            if (!badge || !TN.messages) return;
+            var count = TN.messages.getUnreadCount();
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
         // --- Search ---
         var searchInput = document.getElementById('adminSearchInput');
         if (searchInput) {
@@ -420,7 +577,7 @@
                     price: parseInt(document.getElementById('prodPrice').value) || 0,
                     originalPrice: parseInt(document.getElementById('prodOriginalPrice').value) || 0,
                     image: document.getElementById('prodImage').value.trim(),
-                    description: document.getElementById('prodDesc').value.trim(),
+                    desc: document.getElementById('prodDesc').value.trim(),
                     rating: parseFloat(document.getElementById('prodRating').value) || 4.5,
                     reviews: parseInt(document.getElementById('prodReviews').value) || 0,
                     stock: document.getElementById('prodStock').value
@@ -456,6 +613,7 @@
 
         // --- Edit Product ---
         TN.admin.editProduct = function (id) {
+            id = parseInt(id);
             var products = TN.data.getProducts();
             var product = products.find(function (p) { return p.id === id; });
             if (!product) return;
@@ -470,7 +628,7 @@
             document.getElementById('prodPrice').value = product.price || '';
             document.getElementById('prodOriginalPrice').value = product.originalPrice || '';
             document.getElementById('prodImage').value = product.image || '';
-            document.getElementById('prodDesc').value = product.description || '';
+            document.getElementById('prodDesc').value = product.desc || '';
             document.getElementById('prodRating').value = product.rating || 4.5;
             document.getElementById('prodReviews').value = product.reviews || 0;
             document.getElementById('prodStock').value = product.stock || 'in';
@@ -494,6 +652,7 @@
 
         // --- Delete Product ---
         TN.admin.deleteProduct = function (id) {
+            id = parseInt(id);
             if (!confirm('Are you sure you want to delete this product?')) return;
             TN.data.deleteProduct(id);
             renderProductsTable();
@@ -530,8 +689,30 @@
         // --- Init ---
         updateDashboard();
         renderProductsTable();
+        updateUnreadBadge();
 
     })();
     </script>
+<!-- Floating Mascot -->
+<div class="mascot-float" onclick="window.location.href='contact.html'" title="Need help? Contact us!">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="50" y="70" width="100" height="80" rx="20" fill="#132240" stroke="#3B82F6" stroke-width="2"/>
+        <rect x="55" y="20" width="90" height="60" rx="16" fill="#132240" stroke="#3B82F6" stroke-width="2"/>
+        <circle cx="80" cy="48" r="10" fill="#3B82F6"/>
+        <circle cx="120" cy="48" r="10" fill="#3B82F6"/>
+        <circle cx="82" cy="46" r="4" fill="#fff"/>
+        <circle cx="122" cy="46" r="4" fill="#fff"/>
+        <path d="M85 62 Q100 72 115 62" fill="none" stroke="#5DCAA5" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="100" y1="20" x2="100" y2="6" stroke="#3B82F6" stroke-width="2"/>
+        <circle cx="100" cy="4" r="4" fill="#3B82F6"/>
+        <rect x="70" y="85" width="60" height="30" rx="6" fill="#0A1628" stroke="#3B82F6" stroke-width="1.5"/>
+        <text x="100" y="105" text-anchor="middle" fill="#5DCAA5" font-size="12" font-family="Inter, sans-serif" font-weight="700">TN</text>
+        <rect x="30" y="80" width="20" height="12" rx="6" fill="#132240" stroke="#3B82F6" stroke-width="1.5"/>
+        <rect x="150" y="80" width="20" height="12" rx="6" fill="#132240" stroke="#3B82F6" stroke-width="1.5"/>
+        <rect x="70" y="150" width="16" height="24" rx="8" fill="#132240" stroke="#3B82F6" stroke-width="1.5"/>
+        <rect x="114" y="150" width="16" height="24" rx="8" fill="#132240" stroke="#3B82F6" stroke-width="1.5"/>
+    </svg>
+    <div class="mascot-float__tooltip">Need help? Contact us!</div>
+</div>
 </body>
 </html>

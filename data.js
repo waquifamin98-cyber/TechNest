@@ -149,7 +149,8 @@ TN.data = {
     },
 
     getProduct: function (id) {
-        return this.getProducts().find(function (p) { return p.id === id; });
+        id = parseInt(id);
+        return this.getProducts().find(function (p) { return p.id == id; });
     },
 
     addProduct: function (product) {
@@ -161,8 +162,9 @@ TN.data = {
     },
 
     updateProduct: function (id, updates) {
+        id = parseInt(id);
         var products = this.getProducts();
-        var idx = products.findIndex(function (p) { return p.id === id; });
+        var idx = products.findIndex(function (p) { return p.id == id; });
         if (idx !== -1) {
             products[idx] = Object.assign({}, products[idx], updates);
             this.saveProducts(products);
@@ -172,7 +174,8 @@ TN.data = {
     },
 
     deleteProduct: function (id) {
-        var products = this.getProducts().filter(function (p) { return p.id !== id; });
+        id = parseInt(id);
+        var products = this.getProducts().filter(function (p) { return p.id != id; });
         this.saveProducts(products);
     },
 
@@ -336,6 +339,86 @@ TN.wishlist = {
             b.textContent = count;
             b.style.display = count > 0 ? 'flex' : 'none';
         });
+    }
+};
+
+TN.messages = {
+    _key: 'technest_messages',
+
+    getMessages: function () {
+        var stored = localStorage.getItem(this._key);
+        if (stored) { try { return JSON.parse(stored); } catch (e) { /* ignore */ } }
+        return [];
+    },
+
+    addMessage: function (msg) {
+        var messages = this.getMessages();
+        msg.id = Date.now();
+        msg.date = new Date().toISOString();
+        msg.read = false;
+        messages.unshift(msg);
+        localStorage.setItem(this._key, JSON.stringify(messages));
+        return msg;
+    },
+
+    markRead: function (id) {
+        var messages = this.getMessages();
+        var msg = messages.find(function (m) { return m.id === id; });
+        if (msg) {
+            msg.read = true;
+            localStorage.setItem(this._key, JSON.stringify(messages));
+        }
+    },
+
+    deleteMessage: function (id) {
+        var messages = this.getMessages().filter(function (m) { return m.id !== id; });
+        localStorage.setItem(this._key, JSON.stringify(messages));
+    },
+
+    getUnreadCount: function () {
+        return this.getMessages().filter(function (m) { return !m.read; }).length;
+    }
+};
+
+TN.orders = {
+    _key: 'technest_orders',
+
+    getOrders: function () {
+        var stored = localStorage.getItem(this._key);
+        if (stored) { try { return JSON.parse(stored); } catch (e) { /* ignore */ } }
+        return [];
+    },
+
+    addOrder: function (order) {
+        var orders = this.getOrders();
+        order.id = Date.now();
+        order.date = new Date().toISOString();
+        order.status = 'pending';
+        orders.unshift(order);
+        localStorage.setItem(this._key, JSON.stringify(orders));
+        return order;
+    },
+
+    getRevenue: function () {
+        return this.getOrders().reduce(function (sum, o) { return sum + (o.total || 0); }, 0);
+    },
+
+    getMonthlyData: function () {
+        var orders = this.getOrders();
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var data = [];
+        var now = new Date();
+        for (var i = 5; i >= 0; i--) {
+            var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            var month = d.getMonth();
+            var year = d.getFullYear();
+            var total = orders.filter(function (o) {
+                var od = new Date(o.date);
+                return od.getMonth() === month && od.getFullYear() === year;
+            }).reduce(function (sum, o) { return sum + (o.total || 0); }, 0);
+            data.push({ label: months[month], revenue: total });
+        }
+        return data;
     }
 };
 
