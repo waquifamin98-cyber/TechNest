@@ -88,7 +88,7 @@
                     <button class="admin-nav-btn admin-nav-btn--active" data-section="dashboard">Dashboard</button>
                     <button class="admin-nav-btn" data-section="products">Products</button>
                     <button class="admin-nav-btn" data-section="add-product">Add Product</button>
-                    <button class="admin-nav-btn" data-section="messages">Messages <span id="unreadBadge" style="background:var(--danger);color:#fff;font-size:0.7rem;padding:1px 6px;border-radius:10px;margin-left:6px;display:none">0</span></button>
+                    <button class="admin-nav-btn" data-section="messages">Chats <span id="unreadBadge" style="background:var(--danger);color:#fff;font-size:0.7rem;padding:1px 6px;border-radius:10px;margin-left:6px;display:none">0</span></button>
                     <button class="admin-nav-btn" data-section="orders">Orders</button>
                 </nav>
             </aside>
@@ -111,7 +111,7 @@
                         </div>
                         <div class="admin-stat-card admin-stat-card--messages">
                             <span class="admin-stat-card__number" id="totalMessages">0</span>
-                            <span class="admin-stat-card__label">Messages</span>
+                            <span class="admin-stat-card__label">Chats</span>
                         </div>
                     </div>
                     <div class="admin-graph-card">
@@ -228,10 +228,10 @@
                 <!-- Messages Section -->
                 <div id="adminMessages" class="admin-section">
                     <div class="admin-section__header">
-                        <h2>Customer Messages</h2>
-                        <button class="btn btn--outline btn--sm" onclick="TN.admin.markAllRead()">Mark all as read</button>
+                        <h2>Chat Conversations</h2>
                     </div>
-                    <div id="adminMessagesList" class="admin-messages__list"></div>
+                    <div id="adminChatList" class="admin-chat-list"></div>
+                    <div id="adminChatDetail" class="admin-chat-detail" style="display:none"></div>
                 </div>
             </main>
         </section>
@@ -358,7 +358,7 @@
             document.getElementById('totalProducts').textContent = products.length;
             document.getElementById('totalOrders').textContent = orders.length;
             document.getElementById('totalRevenue').textContent = '৳' + revenue.toLocaleString();
-            document.getElementById('totalMessages').textContent = messages.length;
+            document.getElementById('totalMessages').textContent = TN.chat ? TN.chat.getChats().length : 0;
             renderProfitChart();
         }
 
@@ -470,65 +470,71 @@
             return div.innerHTML;
         }
 
-        // --- Messages ---
+        // --- Chat Conversations ---
         function renderMessages() {
-            var container = document.getElementById('adminMessagesList');
-            if (!container || !TN.messages) return;
-            var messages = TN.messages.getMessages();
+            var container = document.getElementById('adminChatList');
+            var detail = document.getElementById('adminChatDetail');
+            if (!container || !TN.chat) return;
+            container.style.display = 'flex';
+            detail.style.display = 'none';
+            var chats = TN.chat.getChats();
             container.innerHTML = '';
 
-            if (messages.length === 0) {
-                container.innerHTML = '<div class="admin-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>No messages yet.</p></div>';
+            if (chats.length === 0) {
+                container.innerHTML = '<div class="admin-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>No chat conversations yet.</p></div>';
                 return;
             }
 
-            messages.forEach(function (msg) {
+            chats.forEach(function (chat) {
+                var lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length - 1] : null;
+                var isUnread = lastMsg && lastMsg.sender === 'user';
                 var card = document.createElement('div');
-                card.className = 'admin-message-card' + (msg.read ? '' : ' admin-message-card--unread');
-                var dateStr = new Date(msg.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                card.className = 'admin-chat-card' + (isUnread ? ' admin-chat-card--unread' : '');
+                var timeStr = lastMsg ? new Date(lastMsg.time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                var preview = lastMsg ? lastMsg.text.substring(0, 60) + (lastMsg.text.length > 60 ? '...' : '') : 'No messages yet';
                 card.innerHTML =
-                    '<div class="admin-message-card__header">' +
-                        '<div>' +
-                            '<div class="admin-message-card__from">' + escapeHTML(msg.name) + '</div>' +
-                            '<div class="admin-message-card__email">' + escapeHTML(msg.email) + '</div>' +
-                        '</div>' +
-                        '<div class="admin-message-card__date">' + dateStr + '</div>' +
+                    '<div class="admin-chat-card__header">' +
+                        '<div><span class="admin-chat-card__name">' + escapeHTML(chat.name) + '</span><span class="admin-chat-card__count">' + chat.messages.length + ' msgs</span></div>' +
+                        '<span class="admin-chat-card__time">' + timeStr + '</span>' +
                     '</div>' +
-                    '<div class="admin-message-card__subject">' + escapeHTML(msg.subject) + '</div>' +
-                    '<div class="admin-message-card__body">' + escapeHTML(msg.message) + '</div>' +
-                    (msg.phone ? '<div class="admin-message-card__phone">Phone: ' + escapeHTML(msg.phone) + '</div>' : '') +
-                    '<div class="admin-message-card__actions">' +
-                        '<button class="btn btn--outline btn--sm" onclick="TN.admin.markRead(' + msg.id + ')">Mark Read</button>' +
-                        '<button class="btn btn--outline btn--sm" style="color:var(--danger);border-color:var(--danger)" onclick="TN.admin.deleteMessage(' + msg.id + ')">Delete</button>' +
-                    '</div>';
+                    '<div class="admin-chat-card__email">' + escapeHTML(chat.email) + '</div>' +
+                    '<div class="admin-chat-card__preview">' + escapeHTML(preview) + '</div>';
+                card.addEventListener('click', function () { openChatDetail(chat.email); });
                 container.appendChild(card);
             });
         }
 
-        TN.admin.markRead = function (id) {
-            if (TN.messages) TN.messages.markRead(id);
-            renderMessages();
-            updateUnreadBadge();
-        };
-
-        TN.admin.markAllRead = function () {
-            if (!TN.messages) return;
-            TN.messages.getMessages().forEach(function (m) { TN.messages.markRead(m.id); });
-            renderMessages();
-            updateUnreadBadge();
-        };
-
-        TN.admin.deleteMessage = function (id) {
-            if (!confirm('Delete this message?')) return;
-            if (TN.messages) TN.messages.deleteMessage(id);
-            renderMessages();
-            updateUnreadBadge();
-        };
+        function openChatDetail(email) {
+            var container = document.getElementById('adminChatList');
+            var detail = document.getElementById('adminChatDetail');
+            var chat = TN.chat.getChatByEmail(email);
+            if (!chat) return;
+            container.style.display = 'none';
+            detail.style.display = 'flex';
+            var backSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>';
+            var html = '<div class="admin-chat-detail__header"><button class="admin-chat-detail__back" id="chatBackBtn">' + backSvg + '</button><div><div class="admin-chat-card__name">' + escapeHTML(chat.name) + '</div><div class="admin-chat-card__email">' + escapeHTML(chat.email) + ' &middot; ' + chat.messages.length + ' messages</div></div></div>';
+            html += '<div class="admin-chat-detail__messages">';
+            if (chat.messages.length === 0) {
+                html += '<div class="admin-empty"><p>No messages yet.</p></div>';
+            } else {
+                chat.messages.forEach(function (m) {
+                    var t = new Date(m.time);
+                    var ts = t.getHours().toString().padStart(2, '0') + ':' + t.getMinutes().toString().padStart(2, '0');
+                    var ds = t.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    html += '<div class="chat-msg chat-msg--' + m.sender + '">' + escapeHTML(m.text) + '<div class="chat-msg__time">' + ds + ' ' + ts + '</div></div>';
+                });
+            }
+            html += '</div>';
+            detail.innerHTML = html;
+            document.getElementById('chatBackBtn').addEventListener('click', renderMessages);
+            var msgsEl = detail.querySelector('.admin-chat-detail__messages');
+            if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+        }
 
         function updateUnreadBadge() {
             var badge = document.getElementById('unreadBadge');
-            if (!badge || !TN.messages) return;
-            var count = TN.messages.getUnreadCount();
+            if (!badge || !TN.chat) return;
+            var count = TN.chat.getUnreadChatsCount();
             if (count > 0) {
                 badge.textContent = count;
                 badge.style.display = 'inline';
@@ -693,8 +699,8 @@
 
     })();
     </script>
-<!-- Floating Mascot -->
-<div class="mascot-float" onclick="window.location.href='contact.html'" title="Need help? Contact us!">
+<!-- Floating Mascot & Chat -->
+<div class="mascot-float" id="mascotBtn" title="Chat with us!">
     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <rect x="50" y="70" width="100" height="80" rx="20" fill="#132240" stroke="#3B82F6" stroke-width="2"/>
         <rect x="55" y="20" width="90" height="60" rx="16" fill="#132240" stroke="#3B82F6" stroke-width="2"/>
@@ -712,7 +718,118 @@
         <rect x="70" y="150" width="16" height="24" rx="8" fill="#132240" stroke="#3B82F6" stroke-width="1.5"/>
         <rect x="114" y="150" width="16" height="24" rx="8" fill="#132240" stroke="#3B82F6" stroke-width="1.5"/>
     </svg>
-    <div class="mascot-float__tooltip">Need help? Contact us!</div>
+    <div class="mascot-float__tooltip">Chat with us!</div>
 </div>
+
+<!-- Chat Widget -->
+<div class="chat-widget" id="chatWidget">
+    <div class="chat-widget__header">
+        <div class="chat-widget__header-avatar">
+            <svg width="22" height="22" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="50" y="70" width="100" height="80" rx="20" fill="#132240" stroke="#3B82F6" stroke-width="2"/>
+                <rect x="55" y="20" width="90" height="60" rx="16" fill="#132240" stroke="#3B82F6" stroke-width="2"/>
+                <circle cx="80" cy="48" r="8" fill="#3B82F6"/><circle cx="120" cy="48" r="8" fill="#3B82F6"/>
+                <circle cx="82" cy="46" r="3" fill="#fff"/><circle cx="122" cy="46" r="3" fill="#fff"/>
+                <path d="M88 60 Q100 68 112 60" fill="none" stroke="#5DCAA5" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="chat-widget__header-info">
+            <h4>TechNest Bot</h4>
+            <span>Online - typically replies instantly</span>
+        </div>
+        <button class="chat-widget__close" id="chatClose" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="chat-widget__body" id="chatBody"></div>
+    <div class="chat-widget__footer" id="chatFooter" style="display:none">
+        <input type="text" class="chat-widget__input" id="chatInput" placeholder="Type your message..." autocomplete="off">
+        <button class="chat-widget__send" id="chatSend" aria-label="Send message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+    </div>
+</div>
+<script>
+(function() {
+    if (!window.TN || !TN.chat) return;
+    var mascotBtn = document.getElementById('mascotBtn');
+    var chatWidget = document.getElementById('chatWidget');
+    var chatClose = document.getElementById('chatClose');
+    var chatBody = document.getElementById('chatBody');
+    var chatFooter = document.getElementById('chatFooter');
+    var chatInput = document.getElementById('chatInput');
+    var chatSend = document.getElementById('chatSend');
+
+    mascotBtn.addEventListener('click', function() {
+        chatWidget.classList.toggle('open');
+        if (chatWidget.classList.contains('open')) {
+            renderChat();
+            chatInput.focus();
+        }
+    });
+    chatClose.addEventListener('click', function() {
+        chatWidget.classList.remove('open');
+    });
+
+    function renderChat() {
+        var session = TN.chat.getSession();
+        if (!session) {
+            chatBody.innerHTML = '<div class="chat-gate"><div class="chat-gate__icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3>Welcome to TechNest!</h3><p>Enter your email to start chatting with our bot assistant.</p><div class="chat-gate__form"><input type="email" class="chat-gate__input" id="chatEmail" placeholder="your@email.com"><button class="chat-gate__btn" id="chatVerifyBtn">Start Chat</button></div></div>';
+            chatFooter.style.display = 'none';
+            document.getElementById('chatVerifyBtn').addEventListener('click', function() {
+                var email = document.getElementById('chatEmail').value.trim();
+                if (TN.chat.verifyEmail(email)) {
+                    renderChat();
+                } else {
+                    document.getElementById('chatEmail').style.borderColor = '#ef4444';
+                }
+            });
+            document.getElementById('chatEmail').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') document.getElementById('chatVerifyBtn').click();
+            });
+            return;
+        }
+        chatFooter.style.display = 'flex';
+        var chat = TN.chat.getChatByEmail(session.email);
+        if (!chat) { TN.chat.verifyEmail(session.email); chat = TN.chat.getChatByEmail(session.email); }
+        chatBody.innerHTML = '';
+        if (chat.messages.length === 0) {
+            chatBody.innerHTML = '<div class="chat-msg chat-msg--bot">Hello ' + escapeHtml(session.name) + '! \u{1F44B} I\'m TechNest Bot. Ask me about products, orders, shipping, payments, or anything else!</div>';
+        } else {
+            chat.messages.forEach(function(m) {
+                var div = document.createElement('div');
+                div.className = 'chat-msg chat-msg--' + m.sender;
+                var t = new Date(m.time);
+                var timeStr = t.getHours().toString().padStart(2,'0') + ':' + t.getMinutes().toString().padStart(2,'0');
+                div.innerHTML = escapeHtml(m.text) + '<div class="chat-msg__time">' + timeStr + '</div>';
+                chatBody.appendChild(div);
+            });
+        }
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function sendMessage() {
+        var text = chatInput.value.trim();
+        if (!text) return;
+        var session = TN.chat.getSession();
+        if (!session) return;
+        chatInput.value = '';
+        TN.chat.sendMessage(session.email, text);
+        renderChat();
+        var typing = document.createElement('div');
+        typing.className = 'chat-typing';
+        typing.innerHTML = '<span></span><span></span><span></span>';
+        chatBody.appendChild(typing);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
+
+    window.addEventListener('chat-bot-reply', function() {
+        if (chatWidget.classList.contains('open')) renderChat();
+    });
+
+    function escapeHtml(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s || '')); return d.innerHTML; }
+})();
+</script>
 </body>
 </html>

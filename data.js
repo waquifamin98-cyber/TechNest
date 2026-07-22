@@ -380,6 +380,132 @@ TN.messages = {
     }
 };
 
+TN.chat = {
+    _key: 'technest_chats',
+    _sessionKey: 'technest_chat_session',
+
+    getChats: function () {
+        var stored = localStorage.getItem(this._key);
+        if (stored) { try { return JSON.parse(stored); } catch (e) { /* ignore */ } }
+        return [];
+    },
+
+    saveChats: function (chats) {
+        localStorage.setItem(this._key, JSON.stringify(chats));
+    },
+
+    getSession: function () {
+        var stored = localStorage.getItem(this._sessionKey);
+        if (stored) { try { return JSON.parse(stored); } catch (e) { /* ignore */ } }
+        return null;
+    },
+
+    setSession: function (session) {
+        localStorage.setItem(this._sessionKey, JSON.stringify(session));
+    },
+
+    clearSession: function () {
+        localStorage.removeItem(this._sessionKey);
+    },
+
+    verifyEmail: function (email) {
+        if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return false;
+        }
+        var session = { email: email, name: email.split('@')[0], started: new Date().toISOString() };
+        this.setSession(session);
+        var chats = this.getChats();
+        var existing = chats.find(function (c) { return c.email === email; });
+        if (!existing) {
+            chats.unshift({ email: email, name: session.name, messages: [], started: session.started, lastActive: session.started });
+            this.saveChats(chats);
+        }
+        return true;
+    },
+
+    getChatByEmail: function (email) {
+        return this.getChats().find(function (c) { return c.email === email; });
+    },
+
+    sendMessage: function (email, text) {
+        var chats = this.getChats();
+        var chat = chats.find(function (c) { return c.email === email; });
+        if (!chat) return null;
+
+        var userMsg = { id: Date.now(), sender: 'user', text: text, time: new Date().toISOString() };
+        chat.messages.push(userMsg);
+        chat.lastActive = userMsg.time;
+        this.saveChats(chats);
+
+        var botReply = this._getBotReply(text);
+        var botMsg = { id: Date.now() + 1, sender: 'bot', text: botReply, time: new Date().toISOString() };
+
+        var self = this;
+        setTimeout(function () {
+            var c = self.getChats().find(function (ch) { return ch.email === email; });
+            if (c) {
+                c.messages.push(botMsg);
+                c.lastActive = botMsg.time;
+                self.saveChats(c);
+                window.dispatchEvent(new Event('chat-bot-reply'));
+            }
+        }, 800 + Math.random() * 700);
+
+        return userMsg;
+    },
+
+    getUnreadChatsCount: function () {
+        return this.getChats().filter(function (c) {
+            return c.messages.length > 0 && c.messages[c.messages.length - 1].sender === 'user';
+        }).length;
+    },
+
+    _getBotReply: function (input) {
+        var msg = input.toLowerCase();
+
+        if (msg.match(/\b(hi|hello|hey|assalam|salam|reetings)\b/)) {
+            return "Hello! Welcome to TechNest \u{1F44B} I'm here to help you with product info, orders, shipping, and more. What can I help you with?";
+        }
+        if (msg.match(/\b(thank|thanks|shukriya|dhonnobad)\b/)) {
+            return "You're welcome! \u{1F60A} Is there anything else I can help you with?";
+        }
+        if (msg.match(/\b(bye|goodbye|tata|hoid)\b/)) {
+            return "Goodbye! Have a great day! \u{1F44B} Feel free to come back anytime.";
+        }
+        if (msg.match(/\b(who are you|what are you|your name|tomi ke)\b/)) {
+            return "I'm TechNest Bot \u{1F916}, your virtual assistant! I can help with product recommendations, order tracking, shipping info, and general questions.";
+        }
+        if (msg.match(/\b(ship|deliver|delivery|courier|kobe|delivery time)\b/)) {
+            return "We offer nationwide delivery across Bangladesh! \u{1F4E6}\n\n\u2022 Dhaka: 1-2 days\n\u2022 Outside Dhaka: 2-4 days\n\u2022 Remote areas: 3-5 days\n\nShipping is free on orders above \u09F33,000!";
+        }
+        if (msg.match(/\b(pay|payment|bkash|nagad|card|cash|cod)\b/)) {
+            return "We accept multiple payment methods \u{1F4B3}:\n\n\u2022 bKash\n\u2022 Nagad\n\u2022 VISA / Mastercard\n\u2022 Cash on Delivery (COD)\n\nAll payments are secure and encrypted!";
+        }
+        if (msg.match(/\b(return|refund|warranty|replace|exchange)\b/)) {
+            return "Our return policy \u{1F504}:\n\n\u2022 7-day return window for unused items\n\u2022 Manufacturer warranty on all products\n\u2022 Free returns for defective items\n\u2022 Refund within 5-7 business days\n\nNeed to start a return? Contact support@technest.com.bd";
+        }
+        if (msg.match(/\b(offer|discount|deal|sale|coupon|promo)\b/)) {
+            return "Great news! We have ongoing deals \u{1F525}:\n\n\u2022 Up to 40% off on gaming peripherals\n\u2022 Bundle deals on PC components\n\u2022 Free shipping on orders over \u09F33,000\n\nCheck our Deals page for the latest offers!";
+        }
+        if (msg.match(/\b(order|track|status|kothay|where)\b/)) {
+            return "To track your order \u{1F4CD}:\n\n1. Log in to your TechNest account\n2. Go to Profile \u2192 My Orders\n3. Click on the order to see status\n\nOr email us at support@technest.com.bd with your order ID.";
+        }
+        if (msg.match(/\b(mouse|keyboard|headset|headphone|controller|monitor)\b/)) {
+            return "We have a great selection! \u{1F5A5}\n\nPopular picks:\n\u2022 Razer DeathAdder V3 - \u09F36,490\n\u2022 Corsair K70 RGB - \u09F37,190\n\u2022 Logitech G PRO X - \u09F38,990\n\nWant recommendations? Tell me your budget and I'll suggest the best options!";
+        }
+        if (msg.match(/\b(cheap|budget|affordable|kom|sasta|best price)\b/)) {
+            return "Best budget picks \u{1F4B0}:\n\n\u2022 Havit MS1036 Mouse - \u09F3890\n\u2022 HAVIT HV-H2037d Headphone - \u09F32,490\n\u2022 DeepCool AK400 Cooler - \u09F32,190\n\nAll with warranty and genuine guarantee!";
+        }
+        if (msg.match(/\b(gaming|game|player|pc build|setup)\b/)) {
+            return "Level up your setup! \u{1F3AE}\n\nWe've got everything for gamers:\n\u2022 Gaming mice, keyboards, headsets\n\u2022 Controllers (Xbox, PS, 8BitDo)\n\u2022 PC components for custom builds\n\nWhat kind of setup are you building?";
+        }
+        if (msg.match(/\b(how|what|where|when|why|ki|kemon|konta)\b/)) {
+            return "I'd love to help! \u{1F914}\n\nCould you tell me more specifically what you need? I can assist with:\n\u2022 Product recommendations\n\u2022 Order tracking\n\u2022 Shipping & delivery\n\u2022 Payment options\n\u2022 Returns & warranty";
+        }
+        return "Thanks for your message! \u{1F4AC}\n\nI'm TechNest Bot and I can help with:\n\u2022 Product info & recommendations\n\u2022 Order tracking\n\u2022 Shipping details\n\u2022 Payment options\n\u2022 Returns & warranty\n\nOr contact our team at support@technest.com.bd";
+    }
+};
+
 TN.orders = {
     _key: 'technest_orders',
 
