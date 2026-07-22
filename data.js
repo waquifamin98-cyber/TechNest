@@ -441,15 +441,17 @@ TN.chat = {
         var botMsg = { id: Date.now() + 1, sender: 'bot', text: botReply, time: new Date().toISOString() };
 
         var self = this;
+        var replyDelay = 600 + Math.random() * 800;
         setTimeout(function () {
-            var c = self.getChats().find(function (ch) { return ch.email === email; });
+            var freshChats = self.getChats();
+            var c = freshChats.find(function (ch) { return ch.email === email; });
             if (c) {
                 c.messages.push(botMsg);
                 c.lastActive = botMsg.time;
-                self.saveChats(c);
-                window.dispatchEvent(new Event('chat-bot-reply'));
+                self.saveChats(freshChats);
             }
-        }, 800 + Math.random() * 700);
+            window.dispatchEvent(new CustomEvent('chat-bot-reply', { detail: { email: email } }));
+        }, replyDelay);
 
         return userMsg;
     },
